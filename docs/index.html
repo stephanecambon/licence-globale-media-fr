@@ -534,7 +534,7 @@ function renderEditeur(res){
         <div class="field"><label>Abonnés numériques ${provBadge(t.abonnes)}</label><input id="in_ab" value="${ov.abonnes??(t.abonnes.valeur||'')}"></div>
         <div class="field"><label>ARPU réel (€/mois) ${provBadge(t.arpu)}</label><input id="in_arpu" value="${ov.arpu??(t.arpu.valeur||'')}"></div>
         <div class="field"><label>Visites / mois ${provBadge(visR)}</label><input id="in_vis" value="${ov.visites??(visR.valeur||'')}"></div>
-        <div class="field"><label>Temps moyen / visite <span class="i" title="Visites × temps = temps de lecture. Pris en compte au niveau marché quand la clé = temps de lecture (à venir) ; ici la saisie des visites suffit à recalculer votre part.">i</span></label><input id="in_tps" placeholder="ex. 4 min" value="${ov.tps??''}"></div>
+        <div class="field"><label>Temps moyen / visite <span class="i" title="Donnée non publique (temps de lecture = Médiamétrie, payant) : nous ne la pré-remplissons pas. Vous pouvez saisir la vôtre. Visites × temps = temps de lecture, pris en compte au niveau marché quand la clé = temps de lecture (à venir) ; ici la saisie des visites suffit à recalculer votre part.">i</span></label><input id="in_tps" placeholder="non publié — saisissez le vôtre" value="${ov.tps??''}"></div>
       </div>
       <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Les chiffres publics validés reviennent par PR.</span></div>
     </div>
