@@ -591,7 +591,7 @@ function renderEditeur(res){
         <div class="field"><label>Visites / mois ${provBadge(visR)}</label><input id="in_vis" value="${ov.visites??(visR.valeur||'')}"></div>
         <div class="field"><label>Pages vues / mois <span class="i" data-tip="Métrique ACPM publique (Classement Unifié). Sert de clé d'audience alternative aux visites : un titre très engageant (pages/visite élevé) y pèse davantage. Estimée (visites × pages_par_visite famille) quand l'ACPM ne la publie pas.">i</span> ${provBadge(pvR)}</label><input id="in_pv" value="${ov.pagesVues??(pvR.valeur||'')}"></div>
       </div>
-      <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Les chiffres publics validés reviennent par PR.</span></div>
+      <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Si vos vrais chiffres sont <b>sourçables publiquement</b>, ils peuvent être <b>committés au dépôt Git par une PR</b> : ils deviennent alors la valeur certaine partagée par tous (voir CONTRIBUTING.md).</span></div>
     </div>
     <p class="footnote">Δ, parts et revenu projeté sont des <b>projections de scénario</b> — ni certaines ni estimées. Les badges ● sourcé / ≈ estimé portent sur les données d'entrée ; au survol, leur source ou méthode.</p>`;
   $('#back').onclick=()=>{ view='marche'; render(); };
