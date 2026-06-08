@@ -4,8 +4,8 @@ Modèle économique **ouvert et reproductible** d'une **licence globale** pour l
 
 > Outil pédagogique et **simulateur**, pas la chambre de compensation réelle. Limites assumées dans [`SPEC.md`](SPEC.md) §8.
 
-**▶ Appli en ligne :** `https://<votre-compte>.github.io/licence-globale-presse/`
-*(remplacer `<votre-compte>` ; déploiement automatique via GitHub Pages, voir ci-dessous)*
+**▶ Appli en ligne :** https://stephanecambon.github.io/licence-globale-media-fr/
+*(déploiement automatique via GitHub Pages, voir ci-dessous)*
 
 ## L'appli
 
