@@ -4,27 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Licence globale presse · simulateur</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#f6f3ec; --surface:#fffdf8; --surface2:#f2eee4;
-    --ink:#1d1a16; --ink2:#5b554b; --ink3:#938b7d;
-    --line:#e4ddce; --line2:#d3c9b5;
-    --accent:#b23a2e;
-    --cert:#2f6f57; --cert-bg:#e6efe9;      /* sourcé  */
-    --est:#9a6a12;  --est-bg:#f7eed7;        /* estimé  */
-    --proj:#6b6356; --proj-bg:#ece7dc;       /* projection */
-    --win:#2f7d52; --loss:#b23a2e;
-    --c-app:#3a6ea5; --c-new:#5b9bd5; --c-aud:#b5851f; --c-ia:#6b4c9a; --c-ind:#5f8a6b;
+    --paper:#15171b; --surface:#1d2026; --surface2:#282c33;
+    --ink:#e7e5e0; --ink2:#aab0b8; --ink3:#7e848d;
+    --line:#2a2e35; --line2:#3a3f48;
+    --accent:#e0675a;
+    --cert:#5fb98f; --cert-bg:#16302a;       /* sourcé  */
+    --est:#d6a23e;  --est-bg:#332a16;         /* estimé  */
+    --proj:#9aa0a8; --proj-bg:#262a30;        /* projection */
+    --win:#4fae77; --loss:#e0675a; --loss-bg:#3a201d;
+    --c-app:#5b8fd0; --c-new:#7fb3e6; --c-aud:#d6a23e; --c-ia:#9b7bc4; --c-ind:#6fa583;
+    --tip-bg:#2c323a; --tip-fg:#f0eee9;
     --r:7px; --r2:11px;
-    --fdisp:"Fraunces",Georgia,serif; --fsans:"IBM Plex Sans",system-ui,sans-serif; --fmono:"IBM Plex Mono",monospace;
+    --fdisp:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --fsans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --fmono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
   }
+  html{color-scheme:dark}
   *{box-sizing:border-box}
   html,body{margin:0}
   body{background:
-      radial-gradient(900px 420px at 88% -8%,#fffdf8 0%,transparent 62%),
+      radial-gradient(900px 420px at 88% -8%,rgba(224,103,90,.07) 0%,transparent 62%),
       var(--paper);
     color:var(--ink);font-family:var(--fsans);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
   .num{font-family:var(--fmono);font-variant-numeric:tabular-nums}
@@ -32,8 +33,8 @@
   a{color:inherit}
 
   /* ---- top bar ---- */
-  .top{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1.5px solid var(--ink);
-    position:sticky;top:0;background:rgba(246,243,236,.92);backdrop-filter:blur(6px);z-index:5}
+  .top{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:rgba(21,23,27,.85);backdrop-filter:blur(6px);z-index:5}
   .brand{font-family:var(--fdisp);font-weight:600;font-size:16px;letter-spacing:-.01em}
   .brand b{color:var(--accent)}
   .toggle{display:flex;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin-left:4px}
@@ -70,11 +71,11 @@
   [data-tip]:hover::after,[data-tip]:focus::after{
     content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);
     width:max-content;max-width:240px;white-space:normal;text-align:left;text-transform:none;letter-spacing:normal;
-    background:var(--ink);color:var(--paper);font-family:var(--fsans);font-size:11px;font-style:normal;font-weight:400;line-height:1.35;
-    padding:7px 9px;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.20);z-index:50;pointer-events:none}
+    background:var(--tip-bg);color:var(--tip-fg);font-family:var(--fsans);font-size:11px;font-style:normal;font-weight:400;line-height:1.35;
+    padding:7px 9px;border-radius:7px;box-shadow:0 8px 22px rgba(0,0,0,.5);z-index:50;pointer-events:none}
   [data-tip]:hover::before,[data-tip]:focus::before{
     content:"";position:absolute;left:50%;top:calc(100% + 3px);transform:translateX(-50%);
-    border:5px solid transparent;border-bottom-color:var(--ink);z-index:50;pointer-events:none}
+    border:5px solid transparent;border-bottom-color:var(--tip-bg);z-index:50;pointer-events:none}
   /* Près du bord droit : ancrer la bulle à droite pour éviter le débordement */
   .legend [data-tip]:hover::after,.legend [data-tip]:focus::after,
   th.r [data-tip]:hover::after,th.r [data-tip]:focus::after{left:auto;right:0;transform:none}
@@ -123,7 +124,7 @@
   .verdict .d{font-family:var(--fdisp);font-size:23px;font-weight:600;line-height:1}
   .verdict .l{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;display:block}
   .verdict.win{background:var(--cert-bg);border-color:var(--win)} .verdict.win .d,.verdict.win .l{color:var(--win)}
-  .verdict.loss{background:#f7e7e3;border-color:var(--loss)} .verdict.loss .d,.verdict.loss .l{color:var(--loss)}
+  .verdict.loss{background:var(--loss-bg);border-color:var(--loss)} .verdict.loss .d,.verdict.loss .l{color:var(--loss)}
 
   .cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px}
@@ -360,7 +361,7 @@ function renderEditeur(res){
     <p class="crumb"><button id="back">‹ Marché</button> / <select id="ed_pick" class="edpick" title="Changer d'éditeur">${res.titres.filter(x=>x.id!=='longue-traine').slice().sort((a,b)=>a.nom.localeCompare(b.nom,'fr')).map(x=>`<option value="${x.id}" ${x.id===t.id?'selected':''}>${esc(x.nom)}</option>`).join('')}</select></p>
     <div class="ehead">
       <div><div class="h1">${esc(t.nom)}</div>
-        <div class="meta">${esc(t.famille)} · ${esc(t.groupe||'—')} · <span class="num">${fmtInt(t.abonnes.valeur||0)}</span> abonnés ${provBadge(t.abonnes)}</div></div>
+        <div class="meta">${esc(t.famille)} · ${esc(t.groupe||'—')} · <span class="num">${fmtInt(t.abonnes.valeur||0)}</span> abonnés numériques ${provBadge(t.abonnes)}</div></div>
       <div class="verdict ${win?'win':'loss'}"><span class="d num">${fmtDelta(t.delta)}</span><span class="l">${win?'gagnant':'perdant'}</span></div>
     </div>
     <div class="cards2">
