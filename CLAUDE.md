@@ -34,9 +34,9 @@ node app/build.js            # régénère docs/index.html depuis les JSON + mod
 
 ## Données : méthodes d'estimation
 
-Tout est dans `data/estimation/parametres_modele.json` (figé, non exposé comme levier dans l'appli). Voir `SPEC.md` §5.1 pour le détail des coefficients. Cascade de résolution (avec couche) : `abonnes_num` (déclaration éditeur → override → `diffusion × conv[famille]` → défaut), `visites` (ACPM → `abonnés × visites_par_abonné[famille]`), `arpu` (override → défaut famille, **jamais un prix catalogue**), `audience` (clé = **visites**, repondérées par l'option).
+Tout est dans `data/estimation/parametres_modele.json` (figé, non exposé comme levier dans l'appli). Voir `SPEC.md` §5.1 pour le détail des coefficients. Cascade de résolution (avec couche) : `abonnes_num` (déclaration éditeur → override → `diffusion × conv[famille]` → défaut), `visites` (ACPM → `abonnés × visites_par_abonné[famille]`), `pages_vues` (ACPM → `visites × pages_par_visite[famille]`), `arpu` (override → défaut famille, **jamais un prix catalogue**), `audience` (clé au choix = **visites** ou **pages vues**, deux vraies métriques ACPM ; visiteurs uniques & temps de lecture exclus car Médiamétrie payant).
 
-État de la couverture (au tag courant) : 84 titres · **77 diffusions, 62 visites, 7 abonnés** sourcés · le reste estimé, ce qui est **assumé et documenté** dans `couverture.js`. Ne pas « combler » une estimation par un chiffre inventé : soit une source publique existe (PR), soit ça reste estimé.
+État de la couverture (au tag courant) : 84 titres · **77 diffusions, 62 visites, 59 pages vues, 7 abonnés** sourcés · le reste estimé, ce qui est **assumé et documenté** dans `couverture.js`. Ne pas « combler » une estimation par un chiffre inventé : soit une source publique existe (PR), soit ça reste estimé.
 
 ## Déploiement
 

@@ -47,6 +47,7 @@ data/
 │   ├── abonnes_num.json     7 titres (déclarations éditeurs / Mind rapporté publiquement)
 │   ├── diffusion_payee.json 77 titres (DFP ACPM 2025)
 │   ├── visites.json         62 titres (ACPM, classement unifié avril 2026)
+│   ├── pages_vues.json      59 titres (ACPM, même classement — Pages Vues Totales)
 │   └── marche.json          agrégats marché (total abonnements, etc.)
 ├── estimation/
 │   ├── parametres_modele.json  méthodes + coefficients (NON exposé dans l'appli)
@@ -64,13 +65,14 @@ Module ES pur (navigateur + Node). Deux pools.
 **Résolution par titre** (cascade, avec couche) :
 - `abonnes_num` : certain (déclaration éditeur) → override → `diffusion_payee × conv_diffusion_abonnes[famille]` → défaut famille.
 - `visites` (audience numérique mensuelle) : certain (ACPM, classement unifié) → `abonnes_num × visites_par_abonne[famille]`.
+- `pages_vues` (pages vues mensuelles) : certain (ACPM, même classement) → `visites × pages_par_visite[famille]`.
 - `arpu` (ARPU abonnement mensuel **estimé**, jamais un prix catalogue) : override → défaut de famille. Rarement public ; seul Mediapart est calculé sur son CA réel.
 
 **Agrégats** : `payeurs_actuels = Σ abonnes / dédoublonnage (1,27)` ; `revenu_actuel_i = abonnes_i × arpu_i × 12`. La **longue traîne** = `total_marché_certifié − Σ titres connus`, caractérisée par les moyennes de `parametres_modele.longue_traine`.
 
 **Pool abonnés** : `payeurs_bundle = migration × payeurs_actuels + net_new` ; `revenu_bundle = payeurs_bundle × prix_pass × 12`.
 - `pool_apporteur = part_apporteur × revenu_bundle`, réparti à la **part de base** de chaque titre (migrants → leur titre ; net-new → prorata de la base actuelle = force d'acquisition). L'apporteur = simplement le % de la licence payée par les abonnés qu'il a apportés.
-- `pool_audience = (1 − part_apporteur) × revenu_bundle`, réparti par la **clé d'audience** = les **visites** du titre (certaines ACPM sinon estimées), repondérées par l'option `temps_de_lecture` (défaut) / `pages_vues` / `lecteurs_uniques`. Les visites remplacent l'ancien proxy `abonnés × coef` ; le temps de lecture réel (Médiamétrie, payant) reste hors d'atteinte, les visites en sont le meilleur proxy public.
+- `pool_audience = (1 − part_apporteur) × revenu_bundle`, réparti par la **clé d'audience** = une **vraie métrique ACPM** du titre, au choix : **`visites`** (défaut) ou **`pages_vues`** (certaines ACPM sinon estimées). Les deux sont publiées au Classement Unifié ACPM et redistribuent différemment (un titre très engageant, pages/visite élevé, pèse davantage en pages vues). Métriques **écartées** car non sourçables publiquement : visiteurs uniques et temps de lecture relèvent de **Médiamétrie** (payant) → exclus par la règle anti-source-payante. Les visites remplacent l'ancien proxy `abonnés × coef`.
 
 **Pool IA** : `pool_ia = enveloppe_ia`, réparti **à 100 %** par la **clé d'inférence brute** (modèle TollBit) — `indice_inference_i = abonnes_i × inference_coef[famille]`.
 - **Pas de take rate** : hypothèse explicite d'une structure gérée par les éditeurs, frais de gestion hors périmètre.
@@ -88,10 +90,11 @@ Tous dans `data/estimation/parametres_modele.json` (figés, non exposés comme l
 |---|---|---|
 | `abonnes_num` | `diffusion_payee × conv_diffusion_abonnes` | PQN 0,45 · PQR 0,15 · magazines 0,30–0,35 |
 | `visites` | `abonnes_num × visites_par_abonne` | PQN 500 · PQR 2000 · mag-news 700 · mag-eco 400 · mag-conn 700 · pure-player 250 |
+| `pages_vues` | `visites × pages_par_visite` | PQN 1,7 · PQR 2,0 · mag-news 1,6 · mag-eco 1,4 · mag-conn 1,55 · pure-player 1,6 (médianes des 59 paires certaines) |
 | `arpu` (€/mois) | défaut de famille (override si CA/abonnés ou positionnement public) | ex. Mediapart 9,1 (CA/abonnés) · Les Échos 25 · Le Monde 13 · Le Figaro 14,5 |
-| clé d'audience | `visites × facteur_option` | temps_de_lecture 1,0 · pages_vues 0,9 · lecteurs_uniques 1,1 |
+| clé d'audience | métrique ACPM au choix : `visites` (défaut) **ou** `pages_vues` | 2 options réelles ; visiteurs uniques & temps de lecture exclus (Médiamétrie payant) |
 | `indice_inference` | `abonnes_num × inference_coef` | **100 % notionnel** (aucune donnée publique) |
-| longue traîne | `total_marché_certifié − Σ titres connus`, profil moyen | arpu 8 · visites/abonné 400 · inference_coef |
+| longue traîne | `total_marché_certifié − Σ titres connus`, profil moyen | arpu 8 · visites/abonné 400 · pages/visite 1,7 · inference_coef |
 | dédoublonnage | multi-abonnements par payeur | 1,27 |
 
 ⚠ La conversion **diffusion → abonnés** est volontairement prudente : sur les 4 titres où l'on connaît les deux (Le Monde, Le Figaro, L'Équipe, Les Échos), le ratio abonnés/diffusion va de **0,60 à 1,26** — trop dispersé pour un coefficient fiable. C'est pourquoi on privilégie les **déclarations éditeurs** quand elles existent.
@@ -110,7 +113,7 @@ Appli statique (GitHub Pages), build-free, lit les JSON.
 
 **Page principale (Marché)**
 - Rail « Ton scénario » (seuls éléments manipulables), deux sections jumelles :
-  - **Abonnés** : prix du pass, migration, net-new payeurs, part à l'apporteur (50 %), clé d'audience (3 options). Un `(i)` par levier.
+  - **Abonnés** : prix du pass, migration, net-new payeurs, part à l'apporteur (50 %), clé d'audience (2 options : visites / pages vues). Un `(i)` par levier.
   - **Pool IA** : enveloppe IA. Réparti aux inférences brutes (méthode → modèle figé).
 - Cartouches KPI avec **% d'évolution** vs aujourd'hui (pool IA = « nouveau »).
 - Tableau **top 10 éditeurs** : titre, abonnés (+ badge de couche), Δ revenu. Clic ligne → fiche éditeur.
@@ -125,11 +128,11 @@ Même langage visuel que la page Marché (rail « Ton scénario » identique à 
 3. **« D'où viendraient vos revenus »** : une **barre totale cumulée** (Total projeté, segmentée par les 4 revenus) **au-dessus du détail**, puis **une barre par revenu** :
    - **Vos abonnés** — part apporteur venant des abonnés actuels qui migrent.
    - **Net new payeurs que vous recrutez** — part apporteur venant des nouveaux payeurs (au prorata de la base = force d'acquisition).
-   - **Revenus licence globale liés à votre audience** — part du pool audience (clé visites / temps de lecture).
+   - **Revenus licence globale liés à votre audience** — part du pool audience (clé visites ou pages vues).
    - **Droits voisins IA** — part du pool IA (inférences).
    Le pool apporteur du titre est scindé entre les deux premières barres selon la composition du pass dans le scénario (migrants vs net-new).
-4. **« Votre poids dans la répartition »** : parts du titre dans les trois clés — base abonnés, audience, inférences IA. Ce sont des **projections** ; au survol, chacune indique la **couche de la clé sous-jacente** (sourcée si visites ACPM, estimée sinon).
-5. **« Je suis cet éditeur »** : saisie **locale, éphémère, jamais persistée** — abonnés (couche affichée), ARPU réel, **visites/mois** et **temps moyen/visite** (leur produit = temps de lecture = clé d'audience). Remplace nos estimations par les vrais chiffres et recalcule la fiche en direct ; les valeurs publiques validées reviennent par PR.
+4. **« Votre poids dans la répartition »** : parts du titre dans les trois clés — base abonnés, audience (selon la clé active : visites ou pages vues), inférences IA. Ce sont des **projections** ; au survol, chacune indique la **couche de la clé sous-jacente** (sourcée si métrique ACPM, estimée sinon).
+5. **« Je suis cet éditeur »** : saisie **locale, éphémère, jamais persistée** — abonnés (couche affichée), ARPU réel, **visites/mois** et **pages vues/mois** (les deux clés d'audience ACPM). Remplace nos estimations par les vrais chiffres et recalcule la fiche en direct ; les valeurs publiques validées reviennent par PR.
 
 Volontairement **écartés** de la fiche (décisions de conception) : la part du revenu *marché actuel*, le cartouche d'explication « pourquoi vous gagnez/perdez » et la liste de leviers — pour garder une fiche centrée sur la **décomposition du revenu**, pas sur le commentaire.
 
@@ -137,14 +140,15 @@ Volontairement **écartés** de la fiche (décisions de conception) : la part du
 
 - `abonnes_num` : **7 titres sourcés** (déclarations éditeurs — Le Monde 602 k, Le Figaro 335 k, L'Équipe 300 k, Mediapart 257 k, Ouest-France 200 k, Le Parisien 100 k+, Les Échos 85 k), **77 estimés**. Le baromètre Mind Media (payant) n'est pas republiable ; fin 2025, seuls **8 titres** dépassent 100 k abonnés numériques → pour l'immense majorité, l'estimation est la seule voie.
 - **La diffusion numérique ACPM ≠ abonnés numériques.** L'ACPM distingue « version numérique de type PDF » (réplique homothétique du papier) et « édition numérique », et le détail numérique par titre est **réservé aux adhérents**. On n'ancre donc **pas** `abonnes_num` dessus : seules les déclarations éditeurs (abonnés tout-accès) le font.
-- `visites` : **62 titres sourcés** (ACPM, classement unifié avril 2026), 22 estimés (régionaux du groupe SIPA/Ouest-France consolidés dans actu.fr et ouest-france.fr ; pure-players hors ACPM ; magazines de niche). Le temps de lecture réel (Médiamétrie) reste payant → la clé d'audience s'appuie sur les **visites** comme proxy public.
+- `visites` : **62 titres sourcés** (ACPM, classement unifié avril 2026), 22 estimés (régionaux du groupe SIPA/Ouest-France consolidés dans actu.fr et ouest-france.fr ; pure-players hors ACPM ; magazines de niche).
+- `pages_vues` : **59 titres sourcés** (ACPM, même classement, colonne Pages Vues Totales), 25 estimés (`visites × pages_par_visite[famille]`). Seconde clé d'audience au choix. Visiteurs uniques et temps de lecture réel restent **hors d'atteinte** (Médiamétrie, payant) → exclus de la couche certaine ; visites et pages vues sont les meilleurs proxys publics.
 - **Cohérence temporelle** : diffusion ACPM = moyenne **2025** ; visites = **avril 2026** ; abonnés éditeurs = dates variées. Deux métriques distinctes, donc acceptable, mais à réaligner si l'on vise une photo à date unique.
 - Les inférences IA ne sont **pas mesurables** par nous → l'indice d'inférence est **100 % notionnel** ; le modèle est un **simulateur**, pas la chambre de compensation réelle.
 - Les coefficients de `parametres_modele.json` sont un **premier jet** à dire d'expert — la conversion diffusion→abonnés est notoirement dispersée (0,60 à 1,26 sur les ancres PQN) — **destinés à être affinés par PR**.
 
 ## 9. Roadmap
 
-1. ✅ Périmètre ACPM (84 titres) · **77 diffusions, 62 visites, 7 abonnés** sourcés · clé d'audience sur visites réelles · modèle codé + validation + spec (cette version, fiche éditeur incluse).
+1. ✅ Périmètre ACPM (84 titres) · **77 diffusions, 62 visites, 59 pages vues, 7 abonnés** sourcés · clé d'audience sur 2 vraies métriques ACPM (visites / pages vues) · modèle codé + validation + spec + appli (fiche éditeur incluse).
 2. Compléter la marge (magazines de connaissance, PHR, pure-players) par PR.
 3. Construire l'appli web (page principale puis fiche éditeur).
 4. Affiner les coefficients d'estimation (familles, inférence) avec données publiques additionnelles.
