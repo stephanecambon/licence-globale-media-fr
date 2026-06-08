@@ -495,7 +495,7 @@ function selectCle(host){
   el.querySelector('select').onchange=e=>{ state.cle_audience=e.target.value; markPreset(); render(); };
   host.appendChild(el);
 }
-const LABELS={prix_pass:'Prix du pass',taux_migration:'Migration',net_new:'Net-new payeurs',part_apporteur:"Part à l'apporteur",enveloppe_ia:'Enveloppe IA'};
+const LABELS={prix_pass:'Prix du pass',taux_migration:"Taux d'adoption",net_new:'Net-new payeurs',part_apporteur:"Part à l'apporteur",enveloppe_ia:'Enveloppe IA'};
 const labelOf=k=>LABELS[k]||k;
 
 /* =================== rendu =================== */
