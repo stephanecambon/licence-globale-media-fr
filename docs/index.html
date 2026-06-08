@@ -176,7 +176,7 @@
   <div class="legend">
     <span class="chip cert" data-tip="Donnée d'entrée sourcée publiquement (couche certaine)."><span class="dotk" style="background:var(--cert)"></span>sourcé</span>
     <span class="chip est" data-tip="Donnée d'entrée calculée par méthode ou posée en override documenté (couche estimation)."><span class="dotk" style="background:var(--est)"></span>estimé</span>
-    <span class="chip proj" data-tip="Résultat de scénario (revenu projeté, Δ, parts) — ni certain ni estimé, sans couche."><span class="dotk" style="background:var(--proj)"></span>projection</span>
+    <span class="chip proj" data-tip="Résultat calculé du scénario (revenu projeté, Δ, parts) : ce n'est pas une donnée d'entrée, donc pas de badge sourcé/estimé."><span class="dotk" style="background:var(--proj)"></span>projection</span>
   </div>
 </div>
 
@@ -542,7 +542,7 @@ function renderMarche(res){
         <div class="tag-new">nouveau</div></div>
     </div>
     <div class="sech">Top 10 éditeurs — effet sur le revenu</div>
-    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu <span class="i" data-tip="Revenu projeté « licence globale » ÷ revenu d'abonnement actuel − 1. Projection de scénario, sans couche.">i</span></th></tr></thead>
+    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu <span class="i" data-tip="Revenu projeté « licence globale » ÷ revenu d'abonnement actuel − 1. Un résultat calculé, pas une donnée sourcée ni estimée.">i</span></th></tr></thead>
     <tbody>${top.map((t,i)=>{
       const w=Math.abs(t.delta||0)/maxAbs*100, pos=(t.delta||0)>=0;
       return `<tr data-id="${t.id}">
@@ -596,9 +596,9 @@ function renderEditeur(res){
     ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}<span class="i" data-tip="${esc(r[3])}">i</span></span>
       <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
     <div class="sech">Votre poids dans la répartition</div>
-    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes,'Part du titre dans la base d’abonnés totale ; clé du pool apporteur (force d’acquisition). Projection.')}
-    ${shareRow('Part de l\u2019audience ('+audLabel+')',t.partAudience,audR,'Part du titre dans la cl\u00e9 d\u2019audience active ('+audLabel+') ; r\u00e9partit le pool audience. Projection.')}
-    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'},'Part du titre dans l’indice d’inférence (abonnés × coef) ; indice notionnel, aucune donnée publique. Projection.')}
+    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes,'Part du titre dans la base d’abonnés totale ; clé du pool apporteur (force d’acquisition). Résultat calculé, pas une donnée sourcée ni estimée.')}
+    ${shareRow('Part de l\u2019audience ('+audLabel+')',t.partAudience,audR,'Part du titre dans la cl\u00e9 d\u2019audience active ('+audLabel+') ; r\u00e9partit le pool audience. Résultat calculé, pas une donnée sourcée ni estimée.')}
+    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'},'Part du titre dans l’indice d’inférence (abonnés × coef) ; indice notionnel, aucune donnée publique. Résultat calculé, pas une donnée sourcée ni estimée.')}
     <div class="sech">Je suis ${esc(t.nom)} — corriger avec mes chiffres</div>
     <div class="self">
       <div class="grid">
