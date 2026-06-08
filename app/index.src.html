@@ -96,8 +96,9 @@
   .hint{font-size:11px;color:var(--ink3);margin:8px 2px 0}
 
   /* ---- fiche éditeur ---- */
-  .crumb{font-size:12px;color:var(--ink3);margin:0 0 10px}
+  .crumb{font-size:12px;color:var(--ink3);margin:0 0 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .crumb button{border:0;background:none;color:var(--accent);font-size:12px;padding:0;text-decoration:none}
+  .edpick{font-family:inherit;font-size:12px;color:var(--ink);background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);padding:3px 6px;max-width:260px}
   .ehead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
   .ehead .h1{font-family:var(--fdisp);font-size:28px;font-weight:600;margin:0;letter-spacing:-.01em}
   .ehead .meta{font-size:12px;color:var(--ink2);margin-top:4px}
@@ -334,7 +335,7 @@ function renderEditeur(res){
   const audLabel=t.cleAudience==='pages_vues'?'pages vues':'visites';
   const ov=localOverride[t.id]||{};
   $('#main').innerHTML=`
-    <p class="crumb"><button id="back">‹ Marché</button> / ${esc(t.nom)}</p>
+    <p class="crumb"><button id="back">‹ Marché</button> / <select id="ed_pick" class="edpick" title="Changer d'éditeur">${res.titres.filter(x=>x.id!=='longue-traine').slice().sort((a,b)=>a.nom.localeCompare(b.nom,'fr')).map(x=>`<option value="${x.id}" ${x.id===t.id?'selected':''}>${esc(x.nom)}</option>`).join('')}</select></p>
     <div class="ehead">
       <div><div class="h1">${esc(t.nom)}</div>
         <div class="meta">${esc(t.famille)} · ${esc(t.groupe||'—')} · <span class="num">${fmtInt(t.abonnes.valeur||0)}</span> abonnés ${provBadge(t.abonnes)}</div></div>
@@ -365,6 +366,7 @@ function renderEditeur(res){
     </div>
     <p class="footnote">Δ, parts et revenu projeté sont des <b>projections de scénario</b> — ni certaines ni estimées. Les badges ● sourcé / ≈ estimé portent sur les données d'entrée ; au survol, leur source ou méthode.</p>`;
   $('#back').onclick=()=>{ view='marche'; render(); };
+  $('#ed_pick').onchange=e=>{ currentEditeur=e.target.value; localOverride={}; render(); };
   const apply=()=>{ const o={}; const ab=parseNum($('#in_ab').value), ar=parseNum($('#in_arpu').value), vi=parseNum($('#in_vis').value), pv=parseNum($('#in_pv').value);
     if(ab) o.abonnes=ab; if(ar) o.arpu=ar; if(vi) o.visites=vi; if(pv) o.pagesVues=pv; localOverride[t.id]=o; render(); };
   ['in_ab','in_arpu','in_vis','in_pv'].forEach(id=>$('#'+id).addEventListener('change',apply));
