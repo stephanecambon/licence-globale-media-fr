@@ -149,14 +149,18 @@ export function runModel(dataset, hypotheses) {
   const sommeAudience = profils.reduce((s, p) => s + indiceAudience(p, cleAudience), 0) || 1;
   const sommeInference = profils.reduce((s, p) => s + p.indiceInference, 0) || 1;
 
+  // Coexistence : les abonnés NON migrés continuent de payer leur abonnement individuel.
+  const partNonMigree = 1 - h.taux_migration;
+
   const titres = profils.map((p) => {
     const partBase = (p.abonnes.valeur || 0) / sommeBase;            // force d'acquisition (apporteur)
     const partAudience = indiceAudience(p, cleAudience) / sommeAudience;
     const partInference = p.indiceInference / sommeInference;
+    const revResiduel = partNonMigree * p.revenuActuel;             // abonnés restés en individuel
     const revApporteur = poolApporteur * partBase;
     const revAudience = poolAudience * partAudience;
     const revIA = poolIA * partInference;
-    const revenuProjete = revApporteur + revAudience + revIA;
+    const revenuProjete = revResiduel + revApporteur + revAudience + revIA;
     const delta = p.revenuActuel > 0 ? revenuProjete / p.revenuActuel - 1 : null;
     return {
       id: p.id, nom: p.nom, famille: p.famille, groupe: p.groupe,
@@ -164,7 +168,7 @@ export function runModel(dataset, hypotheses) {
       cleAudience,
       revenuActuel: p.revenuActuel,
       revenuProjete,
-      decomposition: { apporteur: revApporteur, audience: revAudience, ia: revIA },
+      decomposition: { residuel: revResiduel, apporteur: revApporteur, audience: revAudience, ia: revIA },
       partInference, partAudience, partApporteur: partBase,
       delta
     };
@@ -172,7 +176,8 @@ export function runModel(dataset, hypotheses) {
 
   titres.sort((a, b) => (b.abonnes.valeur || 0) - (a.abonnes.valeur || 0));
 
-  const revenuTotal = revenuBundle + poolIA;
+  const revenuResiduelTotal = partNonMigree * revenuActuelTotal;   // abonnements individuels maintenus
+  const revenuTotal = revenuResiduelTotal + revenuBundle + poolIA;
   return {
     kpis: {
       revenuTotal,
@@ -181,6 +186,7 @@ export function runModel(dataset, hypotheses) {
       deltaPayeurs: payeursActuels > 0 ? payeursBundle / payeursActuels - 1 : null,
       poolAbonnements: revenuBundle,
       poolIA,
+      revenuResiduel: revenuResiduelTotal,
       revenuActuelTotal,
       payeursActuels
     },

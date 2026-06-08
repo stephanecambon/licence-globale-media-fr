@@ -17,7 +17,7 @@
     --est:#9a6a12;  --est-bg:#f7eed7;        /* estimé  */
     --proj:#6b6356; --proj-bg:#ece7dc;       /* projection */
     --win:#2f7d52; --loss:#b23a2e;
-    --c-app:#3a6ea5; --c-new:#5b9bd5; --c-aud:#b5851f; --c-ia:#6b4c9a;
+    --c-app:#3a6ea5; --c-new:#5b9bd5; --c-aud:#b5851f; --c-ia:#6b4c9a; --c-ind:#5f8a6b;
     --r:7px; --r2:11px;
     --fdisp:"Fraunces",Georgia,serif; --fsans:"IBM Plex Sans",system-ui,sans-serif; --fmono:"IBM Plex Mono",monospace;
   }
@@ -305,7 +305,7 @@ function renderMarche(res){
   const maxAbs=Math.max(...top.map(t=>Math.abs(t.delta||0)),0.01);
   $('#main').innerHTML=`
     <div class="kpis">
-      <div class="kpi"><div class="k">Revenu total <span class="i" data-tip="Revenu total du système = pool abonnements (le pass) + pool IA ; Δ comparé au revenu d'abonnement actuel cumulé.">i</span></div><div class="v">${fmtM(k.revenuTotal)}</div>
+      <div class="kpi"><div class="k">Revenu total <span class="i" data-tip="Revenu total = abonnements individuels maintenus + pool abonnements (pass) + pool IA ; Δ vs revenu d'abonnement actuel cumulé.">i</span></div><div class="v">${fmtM(k.revenuTotal)}</div>
         <div class="delta ${dRev>=0?'up':'down'}">${fmtDelta(dRev)} <small>vs aujourd'hui</small></div></div>
       <div class="kpi"><div class="k">Payeurs <span class="i" data-tip="Payeurs du pass = migration × payeurs actuels + net-new ; payeurs actuels dédoublonnés (1,27 abonnement par payeur).">i</span></div><div class="v">${fmtInt(k.payeurs)}</div>
         <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)}</small></div></div>
@@ -333,11 +333,14 @@ function renderEditeur(res){
   const t=res.titres.find(x=>x.id===currentEditeur) || res.titres[0];
   currentEditeur=t.id;
   const k=res.kpis;
-  // split apporteur migrants / net-new selon composition du pass
-  const fracMig=(state.taux_migration*k.payeursActuels)/k.payeurs, fracNew=state.net_new/k.payeurs;
+  // split apporteur migrants / net-new selon composition du pass (garde : 0/0 si aucun payeur)
+  const denomPay=k.payeurs||1;
+  const fracMig=(state.taux_migration*k.payeursActuels)/denomPay, fracNew=state.net_new/denomPay;
+  const resid=t.decomposition.residuel||0;
   const vosAb=t.decomposition.apporteur*fracMig, netNew=t.decomposition.apporteur*fracNew;
   const aud=t.decomposition.audience, ia=t.decomposition.ia, tot=t.revenuProjete;
-  const rows=[['Vos abonnés',vosAb,'var(--c-app)','Part du pool apporteur venant de vos abonnés actuels qui migrent vers le pass.'],
+  const rows=[['Abonnements individuels maintenus',resid,'var(--c-ind)','Revenu des abonnés qui n’ont pas migré vers le pass et gardent leur abonnement individuel : (1 − migration) × revenu actuel.'],
+              ['Vos abonnés migrés (part du pass)',vosAb,'var(--c-app)','Part du pool apporteur venant de vos abonnés actuels qui migrent vers le pass.'],
               ['Net new payeurs que vous recrutez',netNew,'var(--c-new)','Part du pool apporteur venant des nouveaux payeurs, au prorata de votre base (force d’acquisition).'],
               ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)','Votre part du pool audience, répartie selon la clé active (visites ou pages vues).'],
               ['Droits voisins IA',ia,'var(--c-ia)','Votre part du pool IA, répartie selon l’indice d’inférence (notionnel, aucune donnée publique).']];

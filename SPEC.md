@@ -78,9 +78,13 @@ Module ES pur (navigateur + Node). Deux pools.
 - **Pas de take rate** : hypothèse explicite d'une structure gérée par les éditeurs, frais de gestion hors périmètre.
 - Méthode d'estimation des inférences = dans le modèle (figé), pas exposée comme levier.
 
-**Par titre** : `revenu_projeté_i = apporteur_i + audience_i + ia_i` ; `Δ_i = revenu_projeté_i / revenu_actuel_i − 1`.
+**Coexistence (résiduel individuel)** : la migration est partielle. Les abonnés **non migrés** continuent de payer leur abonnement individuel, donc l'éditeur conserve `residuel_i = (1 − migration) × revenu_actuel_i`. Sans ce terme, le modèle effaçait à tort le CA des non-migrés (à migration 0 % il tombait au seul pool IA, ce qui est faux).
 
-**KPI** : revenu total (`revenu_bundle + pool_ia`) + Δ vs aujourd'hui ; payeurs + Δ ; pool abonnements ; pool IA (marqué « nouveau », pas un %).
+**Par titre** : `revenu_projeté_i = residuel_i + apporteur_i + audience_i + ia_i` ; `Δ_i = revenu_projeté_i / revenu_actuel_i − 1`. À migration 0 % et IA 0, `revenu_projeté_i = revenu_actuel_i` (Δ = 0) ; à migration 100 %, le résiduel s'annule (tout le monde sur le pass).
+
+⚠ **Effet du dédoublonnage (1,27) sur le prix d'équilibre** : à migration 100 %, un payeur du pass remplace ~1,27 abonnement individuel. Le pass ne préserve donc le CA d'abonnement que si `prix_pass ≳ 1,27 × ARPU moyen` (≈ 14 €/mois sur le périmètre actuel) ; en dessous, perte systémique — c'est structurel, pas un bug.
+
+**KPI** : revenu total (`residuel_total + revenu_bundle + pool_ia`, avec `residuel_total = (1 − migration) × revenu_actuel_total`) + Δ vs aujourd'hui ; payeurs + Δ ; pool abonnements ; pool IA (marqué « nouveau », pas un %).
 
 ### 5.1 Méthodes et coefficients d'estimation
 
