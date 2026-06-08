@@ -194,7 +194,12 @@ const DATASET = /*__DATA__*/ null;
 
 /* =================== utils =================== */
 const $ = (s,r=document)=>r.querySelector(s);
-const fmtM = n => (n/1e6).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' M€';
+const fmtM = n => {
+  const a = Math.abs(n);
+  if (a >= 1e6) return (n/1e6).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' M€';
+  if (a >= 1e3) return Math.round(n/1e3).toLocaleString('fr-FR')+' k€';
+  return Math.round(n).toLocaleString('fr-FR')+' €';
+};
 const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
 const fmtPct = x => (x*100).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
 const fmtDelta = x => x==null ? '—' : (x>=0?'+':'')+(x*100).toFixed(0)+' %';
