@@ -331,7 +331,7 @@ function renderMarche(res){
         <div class="kdis"><span class="kd"><span class="dotk" style="background:var(--c-app)"></span>${compactM(k.payeursPass)} pass</span><span class="kd"><span class="dotk" style="background:var(--c-ind)"></span>${compactM(k.payeursIndividuel)} individuel</span></div></div>
       <div class="kpi"><div class="k">Pool abonnements <span class="i" data-tip="Revenu du pass (payeurs × prix × 12), redistribué aux éditeurs via les pools apporteur et audience.">i</span></div><div class="v">${fmtM(k.poolAbonnements)}</div>
         <div class="delta" style="color:var(--ink3)">redistribué</div></div>
-      <div class="kpi"><div class="k">Pool IA <span class="i" data-tip="Enveloppe IA (droits voisins) : revenu nouveau réparti à 100 % aux inférences, sans take rate — pas un % du pass.">i</span></div><div class="v">${fmtM(k.poolIA)}</div>
+      <div class="kpi"><div class="k">Pool IA <span class="i" data-tip="Enveloppe IA (droits voisins) : revenu nouveau reversé intégralement aux inférences (aucune commission prélevée) — pas un % du pass.">i</span></div><div class="v">${fmtM(k.poolIA)}</div>
         <div class="tag-new">nouveau</div></div>
     </div>
     <div class="sech">Top 10 éditeurs — effet sur le revenu</div>

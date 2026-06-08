@@ -16,7 +16,7 @@
     "cle_audience":    { "valeur": "visites", "options": ["visites", "pages_vues"],
                          "aide": "Métrique ACPM répartissant le pool audience entre titres : visites (défaut) ou pages vues — visiteurs uniques/temps de lecture exclus (payant)." },
     "enveloppe_ia":    { "valeur": 80000000,  "unite": "€/an",   "min": 0, "max": 300000000, "pas": 5000000,
-                         "aide": "Enveloppe annuelle IA (droits voisins), répartie à 100 % aux inférences brutes sans take rate ; revenu nouveau, en plus du pass." }
+                         "aide": "Enveloppe annuelle IA (droits voisins), reversée intégralement aux inférences brutes (aucune commission prélevée) ; revenu nouveau, en plus du pass." }
   },
 
   "scenarios": {
