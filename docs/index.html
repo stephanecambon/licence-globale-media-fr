@@ -91,6 +91,8 @@
   .delta{font-family:var(--fmono);font-size:12.5px;font-weight:600}
   .up{color:var(--win)} .down{color:var(--loss)}
   .tag-new{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-ia);font-weight:600}
+  .kdis{font-size:10.5px;color:var(--ink2);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
+  .kdis .kd{display:inline-flex;align-items:center;gap:4px}
 
   .sech{font-family:var(--fdisp);font-size:16px;font-weight:600;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
   .sech::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -371,6 +373,10 @@ function runModel(dataset, hypotheses) {
       deltaRevenuTotal: revenuActuelTotal > 0 ? revenuTotal / revenuActuelTotal - 1 : null,
       payeurs: payeursBundle,
       deltaPayeurs: payeursActuels > 0 ? payeursBundle / payeursActuels - 1 : null,
+      payeursPass: payeursBundle,                              // migrés + nouveaux (sur le pass)
+      payeursIndividuel: partNonMigree * payeursActuels,       // non migrés (abonnement individuel)
+      payeursTotal: payeursActuels + h.net_new,                // tous les payeurs du système
+      deltaPayeursTotal: payeursActuels > 0 ? (payeursActuels + h.net_new) / payeursActuels - 1 : null,
       poolAbonnements: revenuBundle,
       poolIA,
       revenuResiduel: revenuResiduelTotal,
@@ -502,7 +508,8 @@ function render(){
 
 function renderMarche(res){
   const k=res.kpis;
-  const dRev=k.deltaRevenuTotal, dPay=k.deltaPayeurs;
+  const dRev=k.deltaRevenuTotal, dPay=k.deltaPayeursTotal;
+  const compactM=n=>(n/1e6).toLocaleString('fr-FR',{maximumFractionDigits:2})+' M';
   const titres=res.titres.filter(t=>t.id!=='longue-traine');
   const top=titres.slice(0,10);
   const maxAbs=Math.max(...top.map(t=>Math.abs(t.delta||0)),0.01);
@@ -510,8 +517,9 @@ function renderMarche(res){
     <div class="kpis">
       <div class="kpi"><div class="k">Revenu total <span class="i" data-tip="Revenu total = abonnements individuels maintenus + pool abonnements (pass) + pool IA ; Δ vs revenu d'abonnement actuel cumulé.">i</span></div><div class="v">${fmtM(k.revenuTotal)}</div>
         <div class="delta ${dRev>=0?'up':'down'}">${fmtDelta(dRev)} <small>vs aujourd'hui</small></div></div>
-      <div class="kpi"><div class="k">Payeurs <span class="i" data-tip="Payeurs du pass = migration × payeurs actuels + net-new ; payeurs actuels dédoublonnés (1,27 abonnement par payeur).">i</span></div><div class="v">${fmtInt(k.payeurs)}</div>
-        <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)}</small></div></div>
+      <div class="kpi"><div class="k">Payeurs <span class="i" data-tip="Total des payeurs du système = payeurs actuels (dédoublonnés 1,27) + net-new. Dispatch : sur le pass (migrés + nouveaux) vs restés en abonnement individuel (non migrés).">i</span></div><div class="v">${fmtInt(k.payeursTotal)}</div>
+        <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)} <small>vs aujourd'hui</small></div>
+        <div class="kdis"><span class="kd"><span class="dotk" style="background:var(--c-app)"></span>${compactM(k.payeursPass)} pass</span><span class="kd"><span class="dotk" style="background:var(--c-ind)"></span>${compactM(k.payeursIndividuel)} individuel</span></div></div>
       <div class="kpi"><div class="k">Pool abonnements <span class="i" data-tip="Revenu du pass (payeurs × prix × 12), redistribué aux éditeurs via les pools apporteur et audience.">i</span></div><div class="v">${fmtM(k.poolAbonnements)}</div>
         <div class="delta" style="color:var(--ink3)">redistribué</div></div>
       <div class="kpi"><div class="k">Pool IA <span class="i" data-tip="Enveloppe IA (droits voisins) : revenu nouveau réparti à 100 % aux inférences, sans take rate — pas un % du pass.">i</span></div><div class="v">${fmtM(k.poolIA)}</div>

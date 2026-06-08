@@ -184,6 +184,10 @@ export function runModel(dataset, hypotheses) {
       deltaRevenuTotal: revenuActuelTotal > 0 ? revenuTotal / revenuActuelTotal - 1 : null,
       payeurs: payeursBundle,
       deltaPayeurs: payeursActuels > 0 ? payeursBundle / payeursActuels - 1 : null,
+      payeursPass: payeursBundle,                              // migrés + nouveaux (sur le pass)
+      payeursIndividuel: partNonMigree * payeursActuels,       // non migrés (abonnement individuel)
+      payeursTotal: payeursActuels + h.net_new,                // tous les payeurs du système
+      deltaPayeursTotal: payeursActuels > 0 ? (payeursActuels + h.net_new) / payeursActuels - 1 : null,
       poolAbonnements: revenuBundle,
       poolIA,
       revenuResiduel: revenuResiduelTotal,
