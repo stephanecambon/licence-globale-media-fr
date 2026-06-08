@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "description": "COUCHE ESTIMATION — overrides explicites (estimations assumées). Chaque valeur porte confiance + méthode.",
+    "confiance": "haute | moyenne | faible",
+    "note": "Plus aucun override d'abonnes_num : tous estimés depuis la diffusion ACPM. Les ARPU sont des ESTIMATIONS (pas des prix) : Mediapart calculé sur son CA réel (haute confiance), les autres à dire d'expert à partir du positionnement et des offres publiques."
+  },
+  "abonnes_num": {},
+  "arpu": {
+    "le-monde": {
+      "valeur": 13.0,
+      "confiance": "moyenne",
+      "methode": "ARPU estimé (offre numérique ~12,99 €, formules annuelles)",
+      "source": "le-monde-offres"
+    },
+    "le-figaro": {
+      "valeur": 14.5,
+      "confiance": "moyenne",
+      "methode": "ARPU estimé (offre Premium ~16,99 €, net de promos)",
+      "source": "le-figaro-offres"
+    },
+    "les-echos": {
+      "valeur": 25.0,
+      "confiance": "moyenne",
+      "methode": "ARPU estimé (positionnement premium / B2B)"
+    },
+    "mediapart": {
+      "valeur": 9.1,
+      "confiance": "haute",
+      "methode": "ARPU réel = CA public 28 M€ / 257 383 abonnés / 12 mois",
+      "source": "mediapart-resultats-2025"
+    },
+    "l-equipe": {
+      "valeur": 10.0,
+      "confiance": "faible",
+      "methode": "ARPU estimé"
+    }
+  }
+}

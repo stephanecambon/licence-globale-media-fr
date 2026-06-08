@@ -1,0 +1,604 @@
+{
+  "_meta": {
+    "description": "Registre canonique des titres du périmètre (grand public avec abonnement numérique, presse pro exclue). Source diffusion : classements ACPM 2025.",
+    "perimetre": "PQN + PQR (titres ACPM individuels, hors couplages/cumuls de groupe) + magazines d'information et d'économie + pure-players. Presse TV/people/loisirs/cuisine/déco exclue (pas d'abonnement numérique d'information).",
+    "champs": {
+      "nom": "Nom d'affichage",
+      "famille": "PQN | PQR | magazine-news | magazine-eco | pure-player",
+      "groupe": "Groupe éditeur (indicatif)",
+      "pure_player": "true si 100% numérique",
+      "acpm": "true si diffusion certifiée ACPM"
+    },
+    "note": "Les groupes sont renseignés au mieux et ne sont pas critiques pour le modèle."
+  },
+  "titres": {
+    "le-monde": {
+      "nom": "Le Monde",
+      "famille": "PQN",
+      "groupe": "Groupe Le Monde",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-figaro": {
+      "nom": "Le Figaro",
+      "famille": "PQN",
+      "groupe": "Groupe Figaro",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-equipe": {
+      "nom": "L'Équipe",
+      "famille": "PQN",
+      "groupe": "Éditions Philippe Amaury",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-parisien": {
+      "nom": "Le Parisien",
+      "famille": "PQN",
+      "groupe": "Les Échos-Le Parisien (LVMH)",
+      "pure_player": false,
+      "acpm": true
+    },
+    "les-echos": {
+      "nom": "Les Échos",
+      "famille": "PQN",
+      "groupe": "Les Échos-Le Parisien (LVMH)",
+      "pure_player": false,
+      "acpm": true
+    },
+    "liberation": {
+      "nom": "Libération",
+      "famille": "PQN",
+      "groupe": "Indépendant (fonds de dotation)",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-croix": {
+      "nom": "La Croix",
+      "famille": "PQN",
+      "groupe": "Bayard",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-humanite": {
+      "nom": "L'Humanité",
+      "famille": "PQN",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "nyt-international": {
+      "nom": "The New York Times (éd. internationale)",
+      "famille": "PQN",
+      "groupe": "The New York Times Company",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-opinion": {
+      "nom": "L'Opinion",
+      "famille": "PQN",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "ouest-france": {
+      "nom": "Ouest-France",
+      "famille": "PQR",
+      "groupe": "SIPA / Ouest-France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "sud-ouest": {
+      "nom": "Sud Ouest",
+      "famille": "PQR",
+      "groupe": "Groupe Sud Ouest",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-telegramme": {
+      "nom": "Le Télégramme",
+      "famille": "PQR",
+      "groupe": "Groupe Télégramme",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-voix-du-nord": {
+      "nom": "La Voix du Nord",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-dauphine-libere": {
+      "nom": "Le Dauphiné Libéré",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-nouvelle-republique": {
+      "nom": "La Nouvelle République",
+      "famille": "PQR",
+      "groupe": "NR Groupe",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-progres": {
+      "nom": "Le Progrès",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-montagne": {
+      "nom": "La Montagne",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "dna": {
+      "nom": "Dernières Nouvelles d'Alsace",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-depeche-du-midi": {
+      "nom": "La Dépêche du Midi",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-est-republicain": {
+      "nom": "L'Est Républicain",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-republicain-lorrain": {
+      "nom": "Le Républicain Lorrain",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-courrier-de-l-ouest": {
+      "nom": "Le Courrier de l'Ouest",
+      "famille": "PQR",
+      "groupe": "SIPA / Ouest-France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "midi-libre": {
+      "nom": "Midi Libre",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-union-l-ardennais": {
+      "nom": "L'Union - L'Ardennais",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-provence": {
+      "nom": "La Provence",
+      "famille": "PQR",
+      "groupe": "CMA CGM",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-alsace": {
+      "nom": "L'Alsace",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "nice-matin": {
+      "nom": "Nice Matin",
+      "famille": "PQR",
+      "groupe": "Groupe Nice-Matin",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-journal-de-saone-et-loire": {
+      "nom": "Le Journal de Saône-et-Loire",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-independant": {
+      "nom": "L'Indépendant",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-courrier-picard": {
+      "nom": "Le Courrier Picard",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "var-matin": {
+      "nom": "Var Matin",
+      "famille": "PQR",
+      "groupe": "Groupe Nice-Matin",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-bien-public": {
+      "nom": "Le Bien Public",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "paris-normandie": {
+      "nom": "Paris Normandie",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-maine-libre": {
+      "nom": "Le Maine Libre",
+      "famille": "PQR",
+      "groupe": "SIPA / Ouest-France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "vosges-matin": {
+      "nom": "Vosges Matin",
+      "famille": "PQR",
+      "groupe": "EBRA",
+      "pure_player": false,
+      "acpm": true
+    },
+    "charente-libre": {
+      "nom": "Charente Libre",
+      "famille": "PQR",
+      "groupe": "Groupe Sud Ouest",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-republique-des-pyrenees": {
+      "nom": "La République des Pyrénées",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-populaire-du-centre": {
+      "nom": "Le Populaire du Centre",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "corse-matin": {
+      "nom": "Corse Matin",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-berry-republicain": {
+      "nom": "Le Berry Républicain",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-est-eclair": {
+      "nom": "L'Est Eclair",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-republique-du-centre": {
+      "nom": "La République du Centre",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-echo-republicain": {
+      "nom": "L'Echo Républicain",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-yonne-republicaine": {
+      "nom": "L'Yonne Républicaine",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-presse-de-la-manche": {
+      "nom": "La Presse de la Manche",
+      "famille": "PQR",
+      "groupe": "SIPA / Ouest-France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-journal-du-centre": {
+      "nom": "Le Journal du Centre",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "presse-ocean": {
+      "nom": "Presse Océan",
+      "famille": "PQR",
+      "groupe": "SIPA / Ouest-France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-journal-de-la-haute-marne": {
+      "nom": "Le Journal de la Haute-Marne",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "centre-presse-aveyron": {
+      "nom": "Centre Presse (Aveyron)",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-quotidien-de-la-reunion": {
+      "nom": "Le Quotidien de la Réunion",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-aisne-nouvelle": {
+      "nom": "L'Aisne Nouvelle",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-eveil-de-la-haute-loire": {
+      "nom": "L'Eveil de la Haute-Loire",
+      "famille": "PQR",
+      "groupe": "Centre France",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-nouvelle-republique-des-pyrenees": {
+      "nom": "La Nouvelle République des Pyrénées",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "nord-littoral": {
+      "nom": "Nord Littoral",
+      "famille": "PQR",
+      "groupe": "Rossel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-petit-bleu-d-agen": {
+      "nom": "Le Petit Bleu d'Agen",
+      "famille": "PQR",
+      "groupe": "Groupe La Dépêche",
+      "pure_player": false,
+      "acpm": true
+    },
+    "centre-presse-poitiers": {
+      "nom": "Centre Presse Poitiers",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "dordogne-libre": {
+      "nom": "Dordogne Libre",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-eclair-pyrenees": {
+      "nom": "L'Eclair Pyrénées",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "liberation-champagne": {
+      "nom": "Libération Champagne",
+      "famille": "PQR",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-point": {
+      "nom": "Le Point",
+      "famille": "magazine-news",
+      "groupe": "Artémis",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-nouvel-obs": {
+      "nom": "Le Nouvel Obs",
+      "famille": "magazine-news",
+      "groupe": "Groupe Le Monde",
+      "pure_player": false,
+      "acpm": true
+    },
+    "courrier-international": {
+      "nom": "Courrier International",
+      "famille": "magazine-news",
+      "groupe": "Groupe Le Monde",
+      "pure_player": false,
+      "acpm": true
+    },
+    "l-express": {
+      "nom": "L'Express",
+      "famille": "magazine-news",
+      "groupe": "Groupe Alpha",
+      "pure_player": false,
+      "acpm": true
+    },
+    "marianne": {
+      "nom": "Marianne",
+      "famille": "magazine-news",
+      "groupe": "Indépendant",
+      "pure_player": false,
+      "acpm": true
+    },
+    "le-particulier": {
+      "nom": "Le Particulier",
+      "famille": "magazine-eco",
+      "groupe": "Groupe Le Figaro",
+      "pure_player": false,
+      "acpm": true
+    },
+    "challenges": {
+      "nom": "Challenges",
+      "famille": "magazine-eco",
+      "groupe": "Perdriel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "mieux-vivre-votre-argent": {
+      "nom": "Mieux Vivre Votre Argent",
+      "famille": "magazine-eco",
+      "groupe": "Reworld Media",
+      "pure_player": false,
+      "acpm": true
+    },
+    "capital": {
+      "nom": "Capital",
+      "famille": "magazine-eco",
+      "groupe": "Prisma Media",
+      "pure_player": false,
+      "acpm": true
+    },
+    "investir": {
+      "nom": "Investir - Le Journal des Finances",
+      "famille": "magazine-eco",
+      "groupe": "Les Échos-Le Parisien (LVMH)",
+      "pure_player": false,
+      "acpm": true
+    },
+    "alternatives-economiques": {
+      "nom": "Alternatives Économiques",
+      "famille": "magazine-eco",
+      "groupe": "Indépendant (SCOP)",
+      "pure_player": false,
+      "acpm": true
+    },
+    "mediapart": {
+      "nom": "Mediapart",
+      "famille": "pure-player",
+      "groupe": "Société pour l'Indépendance de Mediapart",
+      "pure_player": true,
+      "acpm": false
+    },
+    "blast": {
+      "nom": "Blast",
+      "famille": "pure-player",
+      "groupe": "Indépendant",
+      "pure_player": true,
+      "acpm": false
+    },
+    "les-jours": {
+      "nom": "Les Jours",
+      "famille": "pure-player",
+      "groupe": "Indépendant",
+      "pure_player": true,
+      "acpm": false
+    },
+    "arret-sur-images": {
+      "nom": "Arrêt sur images",
+      "famille": "pure-player",
+      "groupe": "Indépendant",
+      "pure_player": true,
+      "acpm": false
+    },
+    "reporterre": {
+      "nom": "Reporterre",
+      "famille": "pure-player",
+      "groupe": "Indépendant",
+      "pure_player": true,
+      "acpm": false
+    },
+    "sciences-et-avenir": {
+      "nom": "Sciences et Avenir",
+      "famille": "magazine-connaissance",
+      "groupe": "Perdriel",
+      "pure_player": false,
+      "acpm": true
+    },
+    "ca-m-interesse": {
+      "nom": "Ça m'intéresse",
+      "famille": "magazine-connaissance",
+      "groupe": "Prisma Media",
+      "pure_player": false,
+      "acpm": true
+    },
+    "science-et-vie": {
+      "nom": "Science & Vie",
+      "famille": "magazine-connaissance",
+      "groupe": "Reworld Media",
+      "pure_player": false,
+      "acpm": true
+    },
+    "geo": {
+      "nom": "Geo",
+      "famille": "magazine-connaissance",
+      "groupe": "Prisma Media",
+      "pure_player": false,
+      "acpm": true
+    },
+    "beaux-arts-magazine": {
+      "nom": "Beaux Arts Magazine",
+      "famille": "magazine-connaissance",
+      "groupe": "Beaux Arts & Cie",
+      "pure_player": false,
+      "acpm": true
+    },
+    "historia": {
+      "nom": "Historia",
+      "famille": "magazine-connaissance",
+      "groupe": "Sophia Publications",
+      "pure_player": false,
+      "acpm": true
+    },
+    "jdd": {
+      "nom": "Le Journal du Dimanche",
+      "famille": "magazine-news",
+      "groupe": "Lagardère News",
+      "pure_player": false,
+      "acpm": true
+    },
+    "la-tribune": {
+      "nom": "La Tribune",
+      "famille": "magazine-eco",
+      "groupe": "La Tribune",
+      "pure_player": false,
+      "acpm": true
+    }
+  }
+}

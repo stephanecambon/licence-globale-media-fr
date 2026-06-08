@@ -1,0 +1,104 @@
+{
+  "_meta": {
+    "description": "Registre des sources citées par la couche certaine. Toute valeur 'certaine' DOIT référencer une source d'accès 'public'.",
+    "champs": {
+      "citation": "Citation lisible",
+      "url": "Lien",
+      "acces": "public | payant",
+      "date": "AAAA ou AAAA-MM"
+    },
+    "regle": "Les bases payantes (Mind Media, Médiamétrie, Décisionnel ACPM) ne sont jamais republiées. Seules des valeurs publiquement rapportées (presse, communiqués, pages publiques) alimentent la couche certaine."
+  },
+  "sources": {
+    "presse-mind-2025": {
+      "citation": "Minted, reprenant le baromètre Mind Media des abonnements numériques au 31/12/2025 (Le Monde 602 000)",
+      "url": "https://www.mntd.fr/presse-en-ligne-les-abonnements-numeriques-ne-decollent-pas-quel-est-le-plan-b/",
+      "acces": "public",
+      "date": "2026-03"
+    },
+    "figaro-resultats-2024": {
+      "citation": "Influencia — résultats 2024 du Groupe Figaro (CA, abonnés numériques)",
+      "url": "https://www.influencia.net/145812/",
+      "acces": "public",
+      "date": "2025-02"
+    },
+    "mediapart-resultats-2025": {
+      "citation": "Mediapart — rapport d'activité 2025 (repris AFP / CB News) : 257 383 abonnés au 31/12/2025, CA 28 M€",
+      "url": "https://www.cbnews.fr/cb/257-383-abonnes-mediapart",
+      "acces": "public",
+      "date": "2026-03"
+    },
+    "equipe-300k-2026": {
+      "citation": "The Media Leader / Fondation Jean-Jaurès — L'Équipe franchit 300 000 abonnés numériques (+18% depuis janv. 2026)",
+      "url": "https://fr.themedialeader.com/apres-avoir-atteint-300-000-abonnes-numeriques-lequipe-deploie-son-plus-grand-dispositif-editorial-pour-le-mondial/",
+      "acces": "public",
+      "date": "2026-05"
+    },
+    "acpm-observatoire-2025": {
+      "citation": "ACPM — Observatoire de la presse 2025 : Diffusion France payée par titre (repris par CB News, avril 2026)",
+      "url": "https://www.cbnews.fr/medias/acpm-23-dfp-presse-payante-grand-public-2025",
+      "acces": "public",
+      "date": "2026-04"
+    },
+    "le-monde-offres": {
+      "citation": "Le Monde — page publique d'abonnement (tarif numérique)",
+      "url": "https://www.lemonde.fr/abonnement/",
+      "acces": "public",
+      "date": "2026"
+    },
+    "mediapart-offres": {
+      "citation": "Mediapart — page publique d'abonnement (12 €/mois)",
+      "url": "https://www.mediapart.fr/abonnement",
+      "acces": "public",
+      "date": "2026"
+    },
+    "acpm-classement-2025": {
+      "citation": "ACPM — Classements de diffusion 2025 (presse quotidienne nationale et régionale), données certifiées",
+      "url": "https://www.acpm.fr/classements/pqn",
+      "acces": "public",
+      "date": "2026"
+    },
+    "les-echos-resultats-2025": {
+      "citation": "Groupe Les Échos — résultats 2025 (DG) : 85 000 abonnés numériques sur 105 000, CA 96,1 M€",
+      "url": "https://www.cbinsights.com/company/groupe-les-echos",
+      "acces": "public",
+      "date": "2026"
+    },
+    "le-figaro-offres": {
+      "citation": "Le Figaro — offre d'abonnement Premium numérique (16,99 €/mois après 1er mois)",
+      "url": "https://abo.lefigaro.fr/",
+      "acces": "public",
+      "date": "2026"
+    },
+    "jean-jaures-medias-2026": {
+      "citation": "Fondation Jean-Jaurès, Observatoire des médias (mai 2026) : Le Monde 602 000, Le Figaro 335 000, Mediapart 257 000 abonnés numériques (~70% du segment info nationale)",
+      "url": "https://www.jean-jaures.org/publication/300-000-abonnes-numeriques-a-lequipe-un-exploit-qui-masque-les-limites-du-marche/",
+      "acces": "public",
+      "date": "2026-05"
+    },
+    "acpm-internet-2026-04": {
+      "citation": "ACPM — Classement Unifié Sites Web Grand Public, avril 2026 (visites mensuelles totales par marque)",
+      "url": "https://www.acpm.fr/classements/united-web-sites-gp",
+      "acces": "public",
+      "date": "2026-04"
+    },
+    "acpm-diffusion-2025": {
+      "citation": "ACPM — Classements Diffusion 2025 (PQN, PQR, Presse Magazine) : Diffusion France Payée (DFP) par titre",
+      "url": "https://www.acpm.fr/classements/pqn",
+      "acces": "public",
+      "date": "2026-02"
+    },
+    "ouest-france-plein-cap-2026": {
+      "citation": "Ouest-France — Fabrice Bazard (DG), déclaration publique du 15 mai 2026 (plan « Plein Cap ») : 200 000 abonnés numériques payants, objectif 300 000 d'ici 2028",
+      "url": "https://refrance.fr/ouest-france-affiche-77-millions-deuros-de-resultat-dexploitation-en-2025-le-dg-fabrice-bazard-publie-un-plan-de-cap-numerique-et-lance-plein-cap-pour-atteindre-300-000-abonnes-d/",
+      "acces": "public",
+      "date": "2026-05"
+    },
+    "le-parisien-abonnes-2024": {
+      "citation": "Le Parisien (Sophie Gourmelen, DG) via The Media Leader, mars 2024 : « plus de 100 000 abonnés numériques »",
+      "url": "https://fr.themedialeader.com/le-parisien-lance-une-offre-dabonnement-numerique-gratuit-pour-les-15-25-ans/",
+      "acces": "public",
+      "date": "2024-03"
+    }
+  }
+}

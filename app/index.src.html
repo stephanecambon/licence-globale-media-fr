@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Licence globale presse · simulateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f3ec; --surface:#fffdf8; --surface2:#f2eee4;
+    --ink:#1d1a16; --ink2:#5b554b; --ink3:#938b7d;
+    --line:#e4ddce; --line2:#d3c9b5;
+    --accent:#b23a2e;
+    --cert:#2f6f57; --cert-bg:#e6efe9;      /* sourcé  */
+    --est:#9a6a12;  --est-bg:#f7eed7;        /* estimé  */
+    --proj:#6b6356; --proj-bg:#ece7dc;       /* projection */
+    --win:#2f7d52; --loss:#b23a2e;
+    --c-app:#3a6ea5; --c-new:#5b9bd5; --c-aud:#b5851f; --c-ia:#6b4c9a;
+    --r:7px; --r2:11px;
+    --fdisp:"Fraunces",Georgia,serif; --fsans:"IBM Plex Sans",system-ui,sans-serif; --fmono:"IBM Plex Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(900px 420px at 88% -8%,#fffdf8 0%,transparent 62%),
+      var(--paper);
+    color:var(--ink);font-family:var(--fsans);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+  .num{font-family:var(--fmono);font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer}
+  a{color:inherit}
+
+  /* ---- top bar ---- */
+  .top{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1.5px solid var(--ink);
+    position:sticky;top:0;background:rgba(246,243,236,.92);backdrop-filter:blur(6px);z-index:5}
+  .brand{font-family:var(--fdisp);font-weight:600;font-size:16px;letter-spacing:-.01em}
+  .brand b{color:var(--accent)}
+  .toggle{display:flex;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin-left:4px}
+  .toggle button{border:0;background:transparent;font-size:12.5px;padding:5px 13px;color:var(--ink2)}
+  .toggle button.on{background:var(--ink);color:var(--paper)}
+  .legend{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+
+  .chip{font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;cursor:default}
+  .chip.cert{background:var(--cert-bg);color:var(--cert)} .chip.est{background:var(--est-bg);color:var(--est)}
+  .chip.proj{background:var(--proj-bg);color:var(--proj)}
+  .dotk{width:8px;height:8px;border-radius:2px;display:inline-block;flex:none}
+
+  /* ---- layout ---- */
+  .wrap{display:grid;grid-template-columns:236px 1fr;gap:0;max-width:1160px;margin:0 auto;align-items:start}
+  .rail{position:sticky;top:54px;align-self:start;padding:18px 16px;border-right:1px solid var(--line);min-height:calc(100vh - 54px)}
+  .main{padding:20px 26px 70px}
+
+  /* ---- rail ---- */
+  .rail h3{font-family:var(--fdisp);font-size:13px;font-weight:600;margin:0 0 4px}
+  .rail .sub{font-size:11px;color:var(--ink3);margin:0 0 14px}
+  .presets{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+  .preset{font-size:11px;padding:4px 9px;border:1px solid var(--line2);border-radius:99px;background:var(--surface);color:var(--ink2)}
+  .preset.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .grp{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:14px 0 9px;font-weight:600}
+  .sl{margin-bottom:13px}
+  .sl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink2);margin-bottom:3px;gap:6px}
+  .sl .val{font-family:var(--fmono);font-size:12px;color:var(--ink);font-weight:600}
+  .sl input[type=range]{width:100%;accent-color:var(--accent);height:18px}
+  .sl select{width:100%;font-size:12px;padding:5px 7px;border:1px solid var(--line2);border-radius:var(--r);background:var(--surface);color:var(--ink);font-family:inherit}
+  .i{display:inline-flex;width:13px;height:13px;border:1px solid var(--line2);border-radius:50%;color:var(--ink3);
+    font-size:9px;font-style:italic;align-items:center;justify-content:center;cursor:help;vertical-align:1px}
+  .railfoot{font-size:10.5px;color:var(--ink3);margin-top:20px;border-top:1px solid var(--line);padding-top:10px}
+
+  /* ---- KPI cartouches ---- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:13px 14px}
+  .kpi .k{font-size:11px;color:var(--ink2)}
+  .kpi .v{font-family:var(--fdisp);font-size:24px;font-weight:600;margin-top:4px;letter-spacing:-.01em}
+  .kpi .v small{font-family:var(--fsans);font-size:11px;color:var(--ink3);font-weight:400}
+  .delta{font-family:var(--fmono);font-size:12.5px;font-weight:600}
+  .up{color:var(--win)} .down{color:var(--loss)}
+  .tag-new{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-ia);font-weight:600}
+
+  .sech{font-family:var(--fdisp);font-size:16px;font-weight:600;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+  .sech::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ---- table marché ---- */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;padding:0 10px 7px}
+  thead th.r,td.r{text-align:right}
+  tbody tr{border-top:1px solid var(--line);cursor:pointer}
+  tbody tr:hover{background:var(--surface)}
+  td{padding:9px 10px;vertical-align:middle}
+  td .nm{font-weight:500}
+  td .fam{font-size:10.5px;color:var(--ink3)}
+  .rk{color:var(--ink3);font-family:var(--fmono);font-size:12px;width:26px}
+  .dbar{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+  .dbar .t{width:74px;height:7px;background:var(--surface2);border-radius:99px;overflow:hidden;position:relative}
+  .dbar .t i{position:absolute;top:0;bottom:0;display:block;border-radius:99px}
+  .hint{font-size:11px;color:var(--ink3);margin:8px 2px 0}
+
+  /* ---- fiche éditeur ---- */
+  .crumb{font-size:12px;color:var(--ink3);margin:0 0 10px}
+  .crumb button{border:0;background:none;color:var(--accent);font-size:12px;padding:0;text-decoration:none}
+  .ehead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
+  .ehead .h1{font-family:var(--fdisp);font-size:28px;font-weight:600;margin:0;letter-spacing:-.01em}
+  .ehead .meta{font-size:12px;color:var(--ink2);margin-top:4px}
+  .verdict{flex:none;text-align:center;border-radius:var(--r);padding:7px 13px;border:1px solid}
+  .verdict .d{font-family:var(--fdisp);font-size:23px;font-weight:600;line-height:1}
+  .verdict .l{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;display:block}
+  .verdict.win{background:var(--cert-bg);border-color:var(--win)} .verdict.win .d,.verdict.win .l{color:var(--win)}
+  .verdict.loss{background:#f7e7e3;border-color:var(--loss)} .verdict.loss .d,.verdict.loss .l{color:var(--loss)}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px}
+  .card .k{font-size:11px;color:var(--ink2)} .card .v{font-family:var(--fdisp);font-size:21px;font-weight:600;margin-top:3px}
+
+  .rb{display:grid;grid-template-columns:230px 1fr 60px;align-items:center;gap:10px;font-size:12.5px;margin-bottom:9px}
+  .rb .l{display:flex;align-items:center;gap:7px}
+  .rb .t{height:16px;background:var(--surface2);border-radius:var(--r);overflow:hidden}
+  .rb .t i{display:block;height:100%;border-radius:var(--r)}
+  .rb .a{text-align:right;font-weight:600;font-family:var(--fmono)}
+  .rb.total .l{font-weight:600} .rb.total .a{font-weight:600}
+  .rule{height:1px;background:var(--line);margin:2px 0 10px}
+
+  .share{display:grid;grid-template-columns:210px 1fr 56px;align-items:center;gap:10px;font-size:12.5px;margin-bottom:8px}
+  .share .l{color:var(--ink2);display:flex;align-items:center;gap:7px}
+  .share .t{height:11px;background:var(--surface2);border-radius:99px;overflow:hidden}
+  .share .t i{display:block;height:100%;border-radius:99px;background:var(--c-app)}
+  .share .p{text-align:right;font-weight:600;font-family:var(--fmono)}
+
+  .self{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);padding:14px;margin-top:6px}
+  .self .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+  .field label{font-size:11px;color:var(--ink2);display:flex;justify-content:space-between;gap:6px;align-items:center}
+  .field input{width:100%;margin-top:4px;font-family:var(--fmono);font-size:14px;font-weight:600;border:1px solid var(--line2);
+    border-radius:var(--r);padding:6px 8px;background:var(--surface);color:var(--ink)}
+  .self .note{font-size:11px;color:var(--ink3);margin-top:11px;display:flex;gap:6px;align-items:flex-start}
+  .self .note .tg{flex:none;background:var(--ink);color:var(--paper);border-radius:99px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;font-weight:600}
+  .footnote{font-size:11px;color:var(--ink3);margin-top:16px}
+
+  @media(max-width:820px){
+    .wrap{grid-template-columns:1fr}
+    .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
+    .kpis{grid-template-columns:1fr 1fr}
+    .rb{grid-template-columns:150px 1fr 56px}.share{grid-template-columns:140px 1fr 50px}
+    .self .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="brand">Licence globale <b>·</b> simulateur</span>
+  <div class="toggle" id="toggle">
+    <button data-v="marche">Marché</button>
+    <button data-v="editeur">Éditeur</button>
+  </div>
+  <div class="legend">
+    <span class="chip cert"><span class="dotk" style="background:var(--cert)"></span>sourcé</span>
+    <span class="chip est"><span class="dotk" style="background:var(--est)"></span>estimé</span>
+    <span class="chip proj"><span class="dotk" style="background:var(--proj)"></span>projection</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <aside class="rail">
+    <h3>Ton scénario</h3>
+    <p class="sub">Les seuls éléments manipulables. Recalcul en direct.</p>
+    <div class="presets" id="presets"></div>
+    <div id="leviers"></div>
+    <p class="railfoot">Modélisation figée v1.0 · l'appli est en lecture seule · les données changent par PR.</p>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+/*__MODEL__*/
+const DATASET = /*__DATA__*/ null;
+
+/* =================== utils =================== */
+const $ = (s,r=document)=>r.querySelector(s);
+const fmtM = n => (n/1e6).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' M€';
+const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
+const fmtPct = x => (x*100).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
+const fmtDelta = x => x==null ? '—' : (x>=0?'+':'')+(x*100).toFixed(0)+' %';
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function provBadge(r){
+  if(!r) return '';
+  if(r.couche==='certain'){
+    const src = DATASET.sources[r.source]; const t = src ? src.citation : (r.source||'source publique');
+    return `<span class="chip cert" title="${esc(t)}"><span class="dotk" style="background:var(--cert)"></span>sourcé</span>`;
+  }
+  const t = (r.methode||'estimation')+(r.confiance?` · confiance ${r.confiance}`:'');
+  return `<span class="chip est" title="${esc(t)}"><span class="dotk" style="background:var(--est)"></span>estimé</span>`;
+}
+
+/* =================== état =================== */
+const LEVIERS = DATASET.hypotheses.leviers;
+let state = hypothesesDepuisScenario(DATASET, DATASET.hypotheses.defaut);
+let view = 'marche';          // 'marche' | 'editeur'
+let currentEditeur = 'les-echos';
+let localOverride = {};       // id -> {abonnes, arpu, visites}
+
+/* lecture URL */
+(function readURL(){
+  const q = new URLSearchParams(location.search);
+  const m = {p:'prix_pass',mig:'taux_migration',nn:'net_new',ap:'part_apporteur',ia:'enveloppe_ia'};
+  for(const [k,key] of Object.entries(m)) if(q.has(k)) state[key]=parseFloat(q.get(k));
+  if(q.has('cle')) state.cle_audience=q.get('cle');
+  if(q.get('v')==='editeur'){ view='editeur'; if(q.get('t')) currentEditeur=q.get('t'); }
+})();
+function writeURL(){
+  const q = new URLSearchParams();
+  q.set('p',state.prix_pass); q.set('mig',state.taux_migration); q.set('nn',state.net_new);
+  q.set('ap',state.part_apporteur); q.set('cle',state.cle_audience); q.set('ia',state.enveloppe_ia);
+  q.set('v',view); if(view==='editeur') q.set('t',currentEditeur);
+  history.replaceState(null,'',location.pathname+'?'+q.toString());
+}
+
+/* dataset effectif (avec overrides locaux « je suis cet éditeur ») */
+function effectiveDataset(){
+  if(!Object.keys(localOverride).length) return DATASET;
+  const d = JSON.parse(JSON.stringify(DATASET));
+  for(const [id,o] of Object.entries(localOverride)){
+    if(o.abonnes!=null) d.certain.abonnes_num.valeurs[id]={valeur:o.abonnes,source:'saisie-editeur'};
+    if(o.visites!=null) d.certain.visites.valeurs[id]={valeur:o.visites,source:'saisie-editeur'};
+    if(o.arpu!=null){ d.overrides.arpu=d.overrides.arpu||{}; d.overrides.arpu[id]={valeur:o.arpu,methode:'saisie éditeur',confiance:'déclaré'}; }
+  }
+  d.sources['saisie-editeur']={citation:'Saisie locale de l\u2019éditeur (éphémère, non partagée)',acces:'local'};
+  return d;
+}
+
+/* =================== rail =================== */
+function buildRail(){
+  // presets
+  const pres = $('#presets'); pres.innerHTML='';
+  Object.keys(DATASET.hypotheses.scenarios).filter(k=>k[0]!=='_').forEach(name=>{
+    const b=document.createElement('button'); b.className='preset'; b.textContent=name[0].toUpperCase()+name.slice(1);
+    b.onclick=()=>{ state=hypothesesDepuisScenario(DATASET,name); localOverride={}; buildRail(); render(); };
+    pres.appendChild(b);
+  });
+  // leviers
+  const host=$('#leviers'); host.innerHTML='';
+  host.insertAdjacentHTML('beforeend','<p class="grp">Abonnés</p>');
+  slider(host,'prix_pass',v=>v+' €'); slider(host,'taux_migration',v=>Math.round(v*100)+' %');
+  slider(host,'net_new',v=>(v/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1})+' M');
+  slider(host,'part_apporteur',v=>Math.round(v*100)+' %'); selectCle(host);
+  host.insertAdjacentHTML('beforeend','<p class="grp">Pool IA</p>');
+  slider(host,'enveloppe_ia',v=>(v/1e6).toLocaleString('fr-FR')+' M€');
+  // refléter preset actif
+  markPreset();
+}
+function markPreset(){
+  document.querySelectorAll('.preset').forEach(b=>{
+    const sc=DATASET.hypotheses.scenarios[b.textContent.toLowerCase()];
+    b.classList.toggle('on', sc && ['prix_pass','taux_migration','net_new','part_apporteur','enveloppe_ia','cle_audience'].every(k=>sc[k]===state[k]));
+  });
+}
+function slider(host,key,fmt){
+  const L=LEVIERS[key];
+  const el=document.createElement('div'); el.className='sl';
+  el.innerHTML=`<div class="lab"><span>${labelOf(key)}<span class="i" title="${esc(L.aide)}">i</span></span><span class="val" id="v_${key}">${fmt(state[key])}</span></div>
+    <input type="range" min="${L.min}" max="${L.max}" step="${L.pas}" value="${state[key]}">`;
+  el.querySelector('input').oninput=e=>{ state[key]=parseFloat(e.target.value); $('#v_'+key).textContent=fmt(state[key]); markPreset(); render(); };
+  host.appendChild(el);
+}
+function selectCle(host){
+  const L=LEVIERS.cle_audience;
+  const el=document.createElement('div'); el.className='sl';
+  el.innerHTML=`<div class="lab"><span>Clé d'audience<span class="i" title="${esc(L.aide)}">i</span></span></div>
+    <select>${L.options.map(o=>`<option value="${o}" ${o===state.cle_audience?'selected':''}>${o.replace(/_/g,' ')}</option>`).join('')}</select>`;
+  el.querySelector('select').onchange=e=>{ state.cle_audience=e.target.value; markPreset(); render(); };
+  host.appendChild(el);
+}
+const LABELS={prix_pass:'Prix du pass',taux_migration:'Migration',net_new:'Net-new payeurs',part_apporteur:"Part à l'apporteur",enveloppe_ia:'Enveloppe IA'};
+const labelOf=k=>LABELS[k]||k;
+
+/* =================== rendu =================== */
+function render(){
+  const res = runModel(effectiveDataset(), state);
+  document.querySelectorAll('#toggle button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  if(view==='marche') renderMarche(res); else renderEditeur(res);
+  writeURL();
+}
+
+function renderMarche(res){
+  const k=res.kpis;
+  const dRev=k.deltaRevenuTotal, dPay=k.deltaPayeurs;
+  const titres=res.titres.filter(t=>t.id!=='longue-traine');
+  const top=titres.slice(0,10);
+  const maxAbs=Math.max(...top.map(t=>Math.abs(t.delta||0)),0.01);
+  $('#main').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="k">Revenu total</div><div class="v">${fmtM(k.revenuTotal)}</div>
+        <div class="delta ${dRev>=0?'up':'down'}">${fmtDelta(dRev)} <small>vs aujourd'hui</small></div></div>
+      <div class="kpi"><div class="k">Payeurs</div><div class="v">${fmtInt(k.payeurs)}</div>
+        <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)}</small></div></div>
+      <div class="kpi"><div class="k">Pool abonnements</div><div class="v">${fmtM(k.poolAbonnements)}</div>
+        <div class="delta" style="color:var(--ink3)">redistribué</div></div>
+      <div class="kpi"><div class="k">Pool IA</div><div class="v">${fmtM(k.poolIA)}</div>
+        <div class="tag-new">nouveau</div></div>
+    </div>
+    <div class="sech">Top 10 éditeurs — effet sur le revenu</div>
+    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu</th></tr></thead>
+    <tbody>${top.map((t,i)=>{
+      const w=Math.abs(t.delta||0)/maxAbs*100, pos=(t.delta||0)>=0;
+      return `<tr data-id="${t.id}">
+        <td class="rk">${i+1}</td>
+        <td><div class="nm">${esc(t.nom)}</div><div class="fam">${esc(t.famille)} · ${esc(t.groupe||'—')}</div></td>
+        <td class="r"><span class="num">${fmtInt(t.abonnes.valeur||0)}</span> ${provBadge(t.abonnes)}</td>
+        <td class="r"><span class="dbar"><span class="delta ${pos?'up':'down'}">${fmtDelta(t.delta)}</span>
+          <span class="t"><i style="${pos?'left:50%':'right:50%'};width:${w/2}%;background:${pos?'var(--win)':'var(--loss)'}"></i></span></span></td>
+      </tr>`;}).join('')}</tbody></table>
+    <p class="hint">Clic sur un titre pour ouvrir sa fiche. Δ = revenu projeté « licence globale » vs revenu d'abonnement actuel. Survole un badge pour la source ou la méthode.</p>`;
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=()=>{ currentEditeur=tr.dataset.id; view='editeur'; localOverride={}; render(); });
+}
+
+function renderEditeur(res){
+  const t=res.titres.find(x=>x.id===currentEditeur) || res.titres[0];
+  currentEditeur=t.id;
+  const k=res.kpis;
+  // split apporteur migrants / net-new selon composition du pass
+  const fracMig=(state.taux_migration*k.payeursActuels)/k.payeurs, fracNew=state.net_new/k.payeurs;
+  const vosAb=t.decomposition.apporteur*fracMig, netNew=t.decomposition.apporteur*fracNew;
+  const aud=t.decomposition.audience, ia=t.decomposition.ia, tot=t.revenuProjete;
+  const rows=[['Vos abonnés',vosAb,'var(--c-app)'],
+              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)'],
+              ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)'],
+              ['Droits voisins IA',ia,'var(--c-ia)']];
+  const maxR=Math.max(...rows.map(r=>r[1]),1);
+  const win=(t.delta||0)>=0;
+  const segs=rows.map(r=>`<i style="width:${tot>0?r[1]/tot*100:0}%;background:${r[2]}"></i>`).join('');
+  const visR=t.visites||{couche:'estimation'};
+  const ov=localOverride[t.id]||{};
+  $('#main').innerHTML=`
+    <p class="crumb"><button id="back">‹ Marché</button> / ${esc(t.nom)}</p>
+    <div class="ehead">
+      <div><div class="h1">${esc(t.nom)}</div>
+        <div class="meta">${esc(t.famille)} · ${esc(t.groupe||'—')} · <span class="num">${fmtInt(t.abonnes.valeur||0)}</span> abonnés ${provBadge(t.abonnes)}</div></div>
+      <div class="verdict ${win?'win':'loss'}"><span class="d num">${fmtDelta(t.delta)}</span><span class="l">${win?'gagnant':'perdant'}</span></div>
+    </div>
+    <div class="cards2">
+      <div class="card"><div class="k">Revenu abonnement actuel</div><div class="v">${fmtM(t.revenuActuel)}<small style="font-size:11px;color:var(--ink3)">/an</small></div></div>
+      <div class="card"><div class="k">Revenu projeté « licence globale »</div><div class="v">${fmtM(t.revenuProjete)} <span class="delta ${win?'up':'down'}" style="font-size:13px">${fmtDelta(t.delta)}</span></div></div>
+    </div>
+    <div class="sech">D'où viendraient vos revenus</div>
+    <div class="rb total"><span class="l">Total projeté</span><span class="t" style="display:flex;height:18px">${segs}</span><span class="a">${fmtM(tot)}</span></div>
+    <div class="rule"></div>
+    ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}</span>
+      <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
+    <div class="sech">Votre poids dans la répartition</div>
+    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes)}
+    ${shareRow('Part de l\u2019audience',t.partAudience,visR)}
+    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'})}
+    <div class="sech">Je suis ${esc(t.nom)} — corriger avec mes chiffres</div>
+    <div class="self">
+      <div class="grid">
+        <div class="field"><label>Abonnés numériques ${provBadge(t.abonnes)}</label><input id="in_ab" value="${ov.abonnes??(t.abonnes.valeur||'')}"></div>
+        <div class="field"><label>ARPU réel (€/mois) ${provBadge(t.arpu)}</label><input id="in_arpu" value="${ov.arpu??(t.arpu.valeur||'')}"></div>
+        <div class="field"><label>Visites / mois ${provBadge(visR)}</label><input id="in_vis" value="${ov.visites??(visR.valeur||'')}"></div>
+        <div class="field"><label>Temps moyen / visite <span class="i" title="Visites × temps = temps de lecture. Pris en compte au niveau marché quand la clé = temps de lecture (à venir) ; ici la saisie des visites suffit à recalculer votre part.">i</span></label><input id="in_tps" placeholder="ex. 4 min" value="${ov.tps??''}"></div>
+      </div>
+      <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Les chiffres publics validés reviennent par PR.</span></div>
+    </div>
+    <p class="footnote">Δ, parts et revenu projeté sont des <b>projections de scénario</b> — ni certaines ni estimées. Les badges ● sourcé / ≈ estimé portent sur les données d'entrée ; au survol, leur source ou méthode.</p>`;
+  $('#back').onclick=()=>{ view='marche'; render(); };
+  const apply=()=>{ const o={}; const ab=parseNum($('#in_ab').value), ar=parseNum($('#in_arpu').value), vi=parseNum($('#in_vis').value), tp=$('#in_tps').value;
+    if(ab) o.abonnes=ab; if(ar) o.arpu=ar; if(vi) o.visites=vi; if(tp) o.tps=tp; localOverride[t.id]=o; render(); };
+  ['in_ab','in_arpu','in_vis'].forEach(id=>$('#'+id).addEventListener('change',apply));
+}
+function parseNum(s){ const n=parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(',','.')); return isNaN(n)?null:n; }
+function shareRow(label,part,resForBadge){
+  return `<div class="share"><span class="l">${provBadge(resForBadge)} ${esc(label)}</span>
+    <span class="t"><i style="width:${Math.min(100,(part||0)*100*8)}%"></i></span>
+    <span class="p">${fmtPct(part||0)}</span></div>`;
+}
+
+/* toggle */
+document.querySelectorAll('#toggle button').forEach(b=>b.onclick=()=>{ view=b.dataset.v; render(); });
+
+buildRail(); render();
+</script>
+</body>
+</html>

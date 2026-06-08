@@ -1,0 +1,114 @@
+{
+  "_meta": {
+    "description": "COUCHE ESTIMATION — méthodologie. On stocke les MÉTHODES et COEFFICIENTS, jamais des valeurs estimées figées (elles sont recalculées par le modèle). Ce fichier n'est PAS modifiable dans l'appli : tout changement passe par une PR.",
+    "version": "1.0"
+  },
+  "familles": {
+    "_doc": "Défauts par famille. arpu_defaut = ARPU abonnement mensuel estimé par défaut (€). Socle des cascades d'estimation.",
+    "PQN": {
+      "arpu_defaut": 13.0,
+      "conv_diffusion_abonnes": 0.45,
+      "audience_coef": 1.0,
+      "inference_coef": 1.25,
+      "visites_par_abonne": 500
+    },
+    "PQR": {
+      "arpu_defaut": 9.0,
+      "conv_diffusion_abonnes": 0.15,
+      "audience_coef": 1.1,
+      "inference_coef": 1.3,
+      "visites_par_abonne": 2000
+    },
+    "magazine-news": {
+      "arpu_defaut": 8.5,
+      "conv_diffusion_abonnes": 0.35,
+      "audience_coef": 0.8,
+      "inference_coef": 0.7,
+      "visites_par_abonne": 700
+    },
+    "magazine-eco": {
+      "arpu_defaut": 12.0,
+      "conv_diffusion_abonnes": 0.3,
+      "audience_coef": 0.7,
+      "inference_coef": 0.65,
+      "visites_par_abonne": 400
+    },
+    "pure-player": {
+      "arpu_defaut": 10.0,
+      "conv_diffusion_abonnes": 1.0,
+      "audience_coef": 0.9,
+      "inference_coef": 0.8,
+      "visites_par_abonne": 250
+    },
+    "magazine-connaissance": {
+      "arpu_defaut": 6.5,
+      "conv_diffusion_abonnes": 0.12,
+      "audience_coef": 0.7,
+      "inference_coef": 0.75,
+      "visites_par_abonne": 700
+    }
+  },
+  "abonnes_num": {
+    "_doc": "Cascade d'estimation quand abonnes_num n'est ni certain ni en override.",
+    "cascade": [
+      "1. valeur certaine (data/certain/abonnes_num.json)",
+      "2. override explicite (data/estimation/overrides.json > abonnes_num)",
+      "3. depuis la diffusion : diffusion_payee * familles[f].conv_diffusion_abonnes",
+      "4. défaut famille (peu fiable) : familles[f].abonnes_defaut",
+      "5. sinon : inconnu (non inventé)"
+    ],
+    "abonnes_defaut_par_famille": {
+      "PQN": 60000,
+      "PQR": 50000,
+      "magazine-news": 45000,
+      "magazine-eco": 30000,
+      "pure-player": 25000,
+      "magazine-connaissance": 25000
+    }
+  },
+  "arpu": {
+    "_doc": "ARPU abonnement mensuel ESTIMÉ par titre (revenu moyen par abonné, jamais un prix catalogue). Rarement public : seul Mediapart est calculable depuis son CA. Sinon override à dire d'expert ou défaut de famille.",
+    "cascade": [
+      "1. override explicite (overrides.json > arpu)",
+      "2. ARPU par défaut de la famille (familles[f].arpu_defaut)"
+    ]
+  },
+  "cle_audience": {
+    "_doc": "Indice d'audience = VISITES du titre (certain si publié par l'ACPM, sinon estimé = abonnés × visites_par_abonne[famille]). L'option ne fait que repondérer.",
+    "defaut": "temps_de_lecture",
+    "options": [
+      "temps_de_lecture",
+      "pages_vues",
+      "lecteurs_uniques"
+    ],
+    "facteur_option": {
+      "temps_de_lecture": 1.0,
+      "pages_vues": 0.9,
+      "lecteurs_uniques": 1.1
+    },
+    "note": "Les visites (ACPM) remplacent l'ancien proxy abonnés×coef. Le temps de lecture réel (Médiamétrie, payant) reste hors d'atteinte : visites = meilleur proxy public."
+  },
+  "indice_inference": {
+    "_doc": "Indice d'inférence par titre, base de la répartition du pool IA (inférences brutes, modèle TollBit).",
+    "methode": "indice_inference = abonnes_num * familles[f].inference_coef",
+    "note": "Inférences brutes : pondère le volume de contenu accessible, pas la qualité de citation. Aucune mesure réelle disponible → estimation."
+  },
+  "longue_traine": {
+    "_doc": "Le résidu = total marché certifié - somme des titres connus. Caractérisé par des moyennes.",
+    "arpu_defaut": 8.0,
+    "audience_coef": 1.0,
+    "inference_coef": 1.0,
+    "confiance": "faible",
+    "visites_par_abonne": 400
+  },
+  "conversions": {
+    "_doc": "Ratios structurels.",
+    "dedoublonnage_abonnements_payeurs": 1.27,
+    "note": "Un payeur unique peut détenir plusieurs abonnements. Payeurs uniques = abonnements / 1,27."
+  },
+  "attribution_net_new": {
+    "_doc": "Qui 'apporte' les nouveaux payeurs (part apporteur).",
+    "migrants": "attribués à leur titre actuel (eux-mêmes)",
+    "net_new": "répartis selon la force d'acquisition, par défaut au prorata de la base d'abonnés actuelle"
+  }
+}

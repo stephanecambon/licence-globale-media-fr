@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Licence globale presse · simulateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f3ec; --surface:#fffdf8; --surface2:#f2eee4;
+    --ink:#1d1a16; --ink2:#5b554b; --ink3:#938b7d;
+    --line:#e4ddce; --line2:#d3c9b5;
+    --accent:#b23a2e;
+    --cert:#2f6f57; --cert-bg:#e6efe9;      /* sourcé  */
+    --est:#9a6a12;  --est-bg:#f7eed7;        /* estimé  */
+    --proj:#6b6356; --proj-bg:#ece7dc;       /* projection */
+    --win:#2f7d52; --loss:#b23a2e;
+    --c-app:#3a6ea5; --c-new:#5b9bd5; --c-aud:#b5851f; --c-ia:#6b4c9a;
+    --r:7px; --r2:11px;
+    --fdisp:"Fraunces",Georgia,serif; --fsans:"IBM Plex Sans",system-ui,sans-serif; --fmono:"IBM Plex Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:
+      radial-gradient(900px 420px at 88% -8%,#fffdf8 0%,transparent 62%),
+      var(--paper);
+    color:var(--ink);font-family:var(--fsans);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+  .num{font-family:var(--fmono);font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer}
+  a{color:inherit}
+
+  /* ---- top bar ---- */
+  .top{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1.5px solid var(--ink);
+    position:sticky;top:0;background:rgba(246,243,236,.92);backdrop-filter:blur(6px);z-index:5}
+  .brand{font-family:var(--fdisp);font-weight:600;font-size:16px;letter-spacing:-.01em}
+  .brand b{color:var(--accent)}
+  .toggle{display:flex;border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin-left:4px}
+  .toggle button{border:0;background:transparent;font-size:12.5px;padding:5px 13px;color:var(--ink2)}
+  .toggle button.on{background:var(--ink);color:var(--paper)}
+  .legend{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+
+  .chip{font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;cursor:default}
+  .chip.cert{background:var(--cert-bg);color:var(--cert)} .chip.est{background:var(--est-bg);color:var(--est)}
+  .chip.proj{background:var(--proj-bg);color:var(--proj)}
+  .dotk{width:8px;height:8px;border-radius:2px;display:inline-block;flex:none}
+
+  /* ---- layout ---- */
+  .wrap{display:grid;grid-template-columns:236px 1fr;gap:0;max-width:1160px;margin:0 auto;align-items:start}
+  .rail{position:sticky;top:54px;align-self:start;padding:18px 16px;border-right:1px solid var(--line);min-height:calc(100vh - 54px)}
+  .main{padding:20px 26px 70px}
+
+  /* ---- rail ---- */
+  .rail h3{font-family:var(--fdisp);font-size:13px;font-weight:600;margin:0 0 4px}
+  .rail .sub{font-size:11px;color:var(--ink3);margin:0 0 14px}
+  .presets{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+  .preset{font-size:11px;padding:4px 9px;border:1px solid var(--line2);border-radius:99px;background:var(--surface);color:var(--ink2)}
+  .preset.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .grp{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:14px 0 9px;font-weight:600}
+  .sl{margin-bottom:13px}
+  .sl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink2);margin-bottom:3px;gap:6px}
+  .sl .val{font-family:var(--fmono);font-size:12px;color:var(--ink);font-weight:600}
+  .sl input[type=range]{width:100%;accent-color:var(--accent);height:18px}
+  .sl select{width:100%;font-size:12px;padding:5px 7px;border:1px solid var(--line2);border-radius:var(--r);background:var(--surface);color:var(--ink);font-family:inherit}
+  .i{display:inline-flex;width:13px;height:13px;border:1px solid var(--line2);border-radius:50%;color:var(--ink3);
+    font-size:9px;font-style:italic;align-items:center;justify-content:center;cursor:help;vertical-align:1px}
+  .railfoot{font-size:10.5px;color:var(--ink3);margin-top:20px;border-top:1px solid var(--line);padding-top:10px}
+
+  /* ---- KPI cartouches ---- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:13px 14px}
+  .kpi .k{font-size:11px;color:var(--ink2)}
+  .kpi .v{font-family:var(--fdisp);font-size:24px;font-weight:600;margin-top:4px;letter-spacing:-.01em}
+  .kpi .v small{font-family:var(--fsans);font-size:11px;color:var(--ink3);font-weight:400}
+  .delta{font-family:var(--fmono);font-size:12.5px;font-weight:600}
+  .up{color:var(--win)} .down{color:var(--loss)}
+  .tag-new{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-ia);font-weight:600}
+
+  .sech{font-family:var(--fdisp);font-size:16px;font-weight:600;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+  .sech::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ---- table marché ---- */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;padding:0 10px 7px}
+  thead th.r,td.r{text-align:right}
+  tbody tr{border-top:1px solid var(--line);cursor:pointer}
+  tbody tr:hover{background:var(--surface)}
+  td{padding:9px 10px;vertical-align:middle}
+  td .nm{font-weight:500}
+  td .fam{font-size:10.5px;color:var(--ink3)}
+  .rk{color:var(--ink3);font-family:var(--fmono);font-size:12px;width:26px}
+  .dbar{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+  .dbar .t{width:74px;height:7px;background:var(--surface2);border-radius:99px;overflow:hidden;position:relative}
+  .dbar .t i{position:absolute;top:0;bottom:0;display:block;border-radius:99px}
+  .hint{font-size:11px;color:var(--ink3);margin:8px 2px 0}
+
+  /* ---- fiche éditeur ---- */
+  .crumb{font-size:12px;color:var(--ink3);margin:0 0 10px}
+  .crumb button{border:0;background:none;color:var(--accent);font-size:12px;padding:0;text-decoration:none}
+  .ehead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
+  .ehead .h1{font-family:var(--fdisp);font-size:28px;font-weight:600;margin:0;letter-spacing:-.01em}
+  .ehead .meta{font-size:12px;color:var(--ink2);margin-top:4px}
+  .verdict{flex:none;text-align:center;border-radius:var(--r);padding:7px 13px;border:1px solid}
+  .verdict .d{font-family:var(--fdisp);font-size:23px;font-weight:600;line-height:1}
+  .verdict .l{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;display:block}
+  .verdict.win{background:var(--cert-bg);border-color:var(--win)} .verdict.win .d,.verdict.win .l{color:var(--win)}
+  .verdict.loss{background:#f7e7e3;border-color:var(--loss)} .verdict.loss .d,.verdict.loss .l{color:var(--loss)}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px}
+  .card .k{font-size:11px;color:var(--ink2)} .card .v{font-family:var(--fdisp);font-size:21px;font-weight:600;margin-top:3px}
+
+  .rb{display:grid;grid-template-columns:230px 1fr 60px;align-items:center;gap:10px;font-size:12.5px;margin-bottom:9px}
+  .rb .l{display:flex;align-items:center;gap:7px}
+  .rb .t{height:16px;background:var(--surface2);border-radius:var(--r);overflow:hidden}
+  .rb .t i{display:block;height:100%;border-radius:var(--r)}
+  .rb .a{text-align:right;font-weight:600;font-family:var(--fmono)}
+  .rb.total .l{font-weight:600} .rb.total .a{font-weight:600}
+  .rule{height:1px;background:var(--line);margin:2px 0 10px}
+
+  .share{display:grid;grid-template-columns:210px 1fr 56px;align-items:center;gap:10px;font-size:12.5px;margin-bottom:8px}
+  .share .l{color:var(--ink2);display:flex;align-items:center;gap:7px}
+  .share .t{height:11px;background:var(--surface2);border-radius:99px;overflow:hidden}
+  .share .t i{display:block;height:100%;border-radius:99px;background:var(--c-app)}
+  .share .p{text-align:right;font-weight:600;font-family:var(--fmono)}
+
+  .self{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);padding:14px;margin-top:6px}
+  .self .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+  .field label{font-size:11px;color:var(--ink2);display:flex;justify-content:space-between;gap:6px;align-items:center}
+  .field input{width:100%;margin-top:4px;font-family:var(--fmono);font-size:14px;font-weight:600;border:1px solid var(--line2);
+    border-radius:var(--r);padding:6px 8px;background:var(--surface);color:var(--ink)}
+  .self .note{font-size:11px;color:var(--ink3);margin-top:11px;display:flex;gap:6px;align-items:flex-start}
+  .self .note .tg{flex:none;background:var(--ink);color:var(--paper);border-radius:99px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;font-weight:600}
+  .footnote{font-size:11px;color:var(--ink3);margin-top:16px}
+
+  @media(max-width:820px){
+    .wrap{grid-template-columns:1fr}
+    .rail{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
+    .kpis{grid-template-columns:1fr 1fr}
+    .rb{grid-template-columns:150px 1fr 56px}.share{grid-template-columns:140px 1fr 50px}
+    .self .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="brand">Licence globale <b>·</b> simulateur</span>
+  <div class="toggle" id="toggle">
+    <button data-v="marche">Marché</button>
+    <button data-v="editeur">Éditeur</button>
+  </div>
+  <div class="legend">
+    <span class="chip cert"><span class="dotk" style="background:var(--cert)"></span>sourcé</span>
+    <span class="chip est"><span class="dotk" style="background:var(--est)"></span>estimé</span>
+    <span class="chip proj"><span class="dotk" style="background:var(--proj)"></span>projection</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <aside class="rail">
+    <h3>Ton scénario</h3>
+    <p class="sub">Les seuls éléments manipulables. Recalcul en direct.</p>
+    <div class="presets" id="presets"></div>
+    <div id="leviers"></div>
+    <p class="railfoot">Modélisation figée v1.0 · l'appli est en lecture seule · les données changent par PR.</p>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+// Modèle « licence globale presse » — moteur de calcul.
+// Module ES pur (aucune I/O) : utilisable tel quel par l'appli (navigateur) et par Node (scripts).
+//
+// Conventions de couches :
+//   - certain    : valeur sourcée publiquement (data/certain/*)
+//   - estimation : valeur calculée (cascade) ou override (data/estimation/*)
+//   - hypothese  : levier de scénario (data/hypothese/hypotheses.json)
+//   - resultat   : projection issue d'un scénario (n'est NI certaine NI estimée)
+//
+// Un « dataset » attendu :
+//   { titres, sources, certain: {metrique:{_meta,valeurs}}, parametres, overrides, marche }
+
+function num(v) {
+  // Une valeur de fichier-métrique est soit un nombre, soit { valeur, ... }
+  if (v == null) return null;
+  return typeof v === "object" ? v.valeur : v;
+}
+
+function certainOf(dataset, metrique, id) {
+  const f = dataset.certain[metrique];
+  if (!f || !f.valeurs || !(id in f.valeurs)) return null;
+  const raw = f.valeurs[id];
+  return { valeur: num(raw), couche: "certain", source: (typeof raw === "object" && raw.source) || f._meta.source };
+}
+
+function overrideOf(dataset, metrique, id) {
+  const f = dataset.overrides[metrique];
+  if (!f || !(id in f)) return null;
+  const o = f[id];
+  return { valeur: o.valeur, couche: "estimation", methode: o.methode, confiance: o.confiance };
+}
+
+// ---- Résolution d'une valeur par titre (cascade + couche) ----------------
+
+function resoudreAbonnes(dataset, id, famille) {
+  const c = certainOf(dataset, "abonnes_num", id);
+  if (c) return c;
+  const o = overrideOf(dataset, "abonnes_num", id);
+  if (o) return o;
+  const diff = certainOf(dataset, "diffusion_payee", id);
+  const fam = dataset.parametres.familles[famille];
+  if (diff && fam) {
+    return { valeur: Math.round(diff.valeur * fam.conv_diffusion_abonnes),
+             couche: "estimation", methode: "diffusion_payee * conv_diffusion_abonnes", confiance: "faible" };
+  }
+  const def = dataset.parametres.abonnes_num.abonnes_defaut_par_famille[famille];
+  if (def != null) {
+    return { valeur: def, couche: "estimation", methode: "défaut famille", confiance: "faible" };
+  }
+  return { valeur: null, couche: "inconnu" };
+}
+
+function resoudreArpu(dataset, id, famille) {
+  // ARPU abonnement mensuel ESTIMÉ (jamais un prix catalogue) : override sinon défaut de famille.
+  const o = overrideOf(dataset, "arpu", id);
+  if (o) return o;
+  const fam = dataset.parametres.familles[famille];
+  return { valeur: fam ? fam.arpu_defaut : null, couche: "estimation", methode: "ARPU défaut famille", confiance: "faible" };
+}
+
+// Visites mensuelles : certaines (ACPM) sinon estimées (abonnés × visites_par_abonné de la famille).
+function resoudreVisites(dataset, id, famille, abonnes) {
+  const c = certainOf(dataset, "visites", id);
+  if (c) return c;
+  const fam = dataset.parametres.familles[famille];
+  const r = fam && fam.visites_par_abonne != null ? fam.visites_par_abonne : 0;
+  return { valeur: (abonnes || 0) * r, couche: "estimation",
+           methode: "abonnés × visites_par_abonné (famille)", confiance: "faible" };
+}
+
+// ---- Profil résolu d'un titre -------------------------------------------
+
+function profilTitre(dataset, id) {
+  const t = dataset.titres[id];
+  const famille = t.famille;
+  const abonnes = resoudreAbonnes(dataset, id, famille);
+  const arpu = resoudreArpu(dataset, id, famille);
+  const fam = dataset.parametres.familles[famille] || { inference_coef: 1 };
+  const a = abonnes.valeur || 0;
+  const visites = resoudreVisites(dataset, id, famille, a);
+  return {
+    id, nom: t.nom, famille, groupe: t.groupe, pure_player: t.pure_player,
+    abonnes, arpu, visites,
+    revenuActuel: a * (arpu.valeur || 0) * 12,
+    indiceAudienceBase: visites.valeur,
+    indiceInference: a * fam.inference_coef
+  };
+}
+
+// ---- Calcul d'un scénario -----------------------------------------------
+
+function runModel(dataset, hypotheses) {
+  const h = hypotheses;
+  const facteurAudience = dataset.parametres.cle_audience.facteur_option[h.cle_audience] ?? 1;
+
+  // Profils des titres connus
+  const profils = Object.keys(dataset.titres).map((id) => profilTitre(dataset, id));
+
+  // Longue traîne = résidu vs total marché certifié
+  const totalAbonnementsConnus = profils.reduce((s, p) => s + (p.abonnes.valeur || 0), 0);
+  const totalMarche = num(dataset.marche.total_abonnements_numeriques);
+  const lt = dataset.parametres.longue_traine;
+  const abonnesLT = Math.max(0, totalMarche - totalAbonnementsConnus);
+  if (abonnesLT > 0) {
+    profils.push({
+      id: "longue-traine", nom: "Longue traîne (reste du marché)", famille: "longue-traine",
+      groupe: "—", pure_player: false,
+      abonnes: { valeur: abonnesLT, couche: "estimation", methode: "total marché - titres connus", confiance: "faible" },
+      arpu: { valeur: lt.arpu_defaut, couche: "estimation", methode: "défaut longue traîne", confiance: "faible" },
+      revenuActuel: abonnesLT * lt.arpu_defaut * 12,
+      visites: { valeur: abonnesLT * (lt.visites_par_abonne || 0), couche: "estimation", methode: "longue traîne × visites_par_abonné", confiance: "faible" },
+      indiceAudienceBase: abonnesLT * (lt.visites_par_abonne || 0),
+      indiceInference: abonnesLT * lt.inference_coef
+    });
+  }
+
+  // Agrégats
+  const dedup = dataset.parametres.conversions.dedoublonnage_abonnements_payeurs;
+  const totalAbonnements = profils.reduce((s, p) => s + (p.abonnes.valeur || 0), 0);
+  const payeursActuels = totalAbonnements / dedup;
+  const revenuActuelTotal = profils.reduce((s, p) => s + p.revenuActuel, 0);
+
+  // Périmètre du pass
+  const payeursBundle = h.taux_migration * payeursActuels + h.net_new;
+  const revenuBundle = payeursBundle * h.prix_pass * 12;
+
+  // Pools
+  const poolApporteur = h.part_apporteur * revenuBundle;
+  const poolAudience = (1 - h.part_apporteur) * revenuBundle;
+  const poolIA = h.enveloppe_ia;
+
+  const sommeBase = totalAbonnements || 1;
+  const sommeAudience = profils.reduce((s, p) => s + p.indiceAudienceBase * facteurAudience, 0) || 1;
+  const sommeInference = profils.reduce((s, p) => s + p.indiceInference, 0) || 1;
+
+  const titres = profils.map((p) => {
+    const partBase = (p.abonnes.valeur || 0) / sommeBase;            // force d'acquisition (apporteur)
+    const partAudience = (p.indiceAudienceBase * facteurAudience) / sommeAudience;
+    const partInference = p.indiceInference / sommeInference;
+    const revApporteur = poolApporteur * partBase;
+    const revAudience = poolAudience * partAudience;
+    const revIA = poolIA * partInference;
+    const revenuProjete = revApporteur + revAudience + revIA;
+    const delta = p.revenuActuel > 0 ? revenuProjete / p.revenuActuel - 1 : null;
+    return {
+      id: p.id, nom: p.nom, famille: p.famille, groupe: p.groupe,
+      abonnes: p.abonnes, arpu: p.arpu,
+      revenuActuel: p.revenuActuel,
+      revenuProjete,
+      decomposition: { apporteur: revApporteur, audience: revAudience, ia: revIA },
+      partInference, partAudience, partApporteur: partBase,
+      delta
+    };
+  });
+
+  titres.sort((a, b) => (b.abonnes.valeur || 0) - (a.abonnes.valeur || 0));
+
+  const revenuTotal = revenuBundle + poolIA;
+  return {
+    kpis: {
+      revenuTotal,
+      deltaRevenuTotal: revenuActuelTotal > 0 ? revenuTotal / revenuActuelTotal - 1 : null,
+      payeurs: payeursBundle,
+      deltaPayeurs: payeursActuels > 0 ? payeursBundle / payeursActuels - 1 : null,
+      poolAbonnements: revenuBundle,
+      poolIA,
+      revenuActuelTotal,
+      payeursActuels
+    },
+    titres
+  };
+}
+
+// Résout une hypothèse à partir d'un preset + surcharges éventuelles
+function hypothesesDepuisScenario(dataset, nomScenario, surcharges = {}) {
+  const hyp = dataset.hypotheses || {};
+  const presets = hyp.scenarios || {};
+  const base = presets[nomScenario] || presets[hyp.defaut] || {};
+  return { ...base, ...surcharges };
+}
+
+const DATASET = {"titres":{"le-monde":{"nom":"Le Monde","famille":"PQN","groupe":"Groupe Le Monde","pure_player":false,"acpm":true},"le-figaro":{"nom":"Le Figaro","famille":"PQN","groupe":"Groupe Figaro","pure_player":false,"acpm":true},"l-equipe":{"nom":"L'Équipe","famille":"PQN","groupe":"Éditions Philippe Amaury","pure_player":false,"acpm":true},"le-parisien":{"nom":"Le Parisien","famille":"PQN","groupe":"Les Échos-Le Parisien (LVMH)","pure_player":false,"acpm":true},"les-echos":{"nom":"Les Échos","famille":"PQN","groupe":"Les Échos-Le Parisien (LVMH)","pure_player":false,"acpm":true},"liberation":{"nom":"Libération","famille":"PQN","groupe":"Indépendant (fonds de dotation)","pure_player":false,"acpm":true},"la-croix":{"nom":"La Croix","famille":"PQN","groupe":"Bayard","pure_player":false,"acpm":true},"l-humanite":{"nom":"L'Humanité","famille":"PQN","groupe":"Indépendant","pure_player":false,"acpm":true},"nyt-international":{"nom":"The New York Times (éd. internationale)","famille":"PQN","groupe":"The New York Times Company","pure_player":false,"acpm":true},"l-opinion":{"nom":"L'Opinion","famille":"PQN","groupe":"Indépendant","pure_player":false,"acpm":true},"ouest-france":{"nom":"Ouest-France","famille":"PQR","groupe":"SIPA / Ouest-France","pure_player":false,"acpm":true},"sud-ouest":{"nom":"Sud Ouest","famille":"PQR","groupe":"Groupe Sud Ouest","pure_player":false,"acpm":true},"le-telegramme":{"nom":"Le Télégramme","famille":"PQR","groupe":"Groupe Télégramme","pure_player":false,"acpm":true},"la-voix-du-nord":{"nom":"La Voix du Nord","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"le-dauphine-libere":{"nom":"Le Dauphiné Libéré","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"la-nouvelle-republique":{"nom":"La Nouvelle République","famille":"PQR","groupe":"NR Groupe","pure_player":false,"acpm":true},"le-progres":{"nom":"Le Progrès","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"la-montagne":{"nom":"La Montagne","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"dna":{"nom":"Dernières Nouvelles d'Alsace","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"la-depeche-du-midi":{"nom":"La Dépêche du Midi","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"l-est-republicain":{"nom":"L'Est Républicain","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"le-republicain-lorrain":{"nom":"Le Républicain Lorrain","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"le-courrier-de-l-ouest":{"nom":"Le Courrier de l'Ouest","famille":"PQR","groupe":"SIPA / Ouest-France","pure_player":false,"acpm":true},"midi-libre":{"nom":"Midi Libre","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"l-union-l-ardennais":{"nom":"L'Union - L'Ardennais","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"la-provence":{"nom":"La Provence","famille":"PQR","groupe":"CMA CGM","pure_player":false,"acpm":true},"l-alsace":{"nom":"L'Alsace","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"nice-matin":{"nom":"Nice Matin","famille":"PQR","groupe":"Groupe Nice-Matin","pure_player":false,"acpm":true},"le-journal-de-saone-et-loire":{"nom":"Le Journal de Saône-et-Loire","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"l-independant":{"nom":"L'Indépendant","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"le-courrier-picard":{"nom":"Le Courrier Picard","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"var-matin":{"nom":"Var Matin","famille":"PQR","groupe":"Groupe Nice-Matin","pure_player":false,"acpm":true},"le-bien-public":{"nom":"Le Bien Public","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"paris-normandie":{"nom":"Paris Normandie","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"le-maine-libre":{"nom":"Le Maine Libre","famille":"PQR","groupe":"SIPA / Ouest-France","pure_player":false,"acpm":true},"vosges-matin":{"nom":"Vosges Matin","famille":"PQR","groupe":"EBRA","pure_player":false,"acpm":true},"charente-libre":{"nom":"Charente Libre","famille":"PQR","groupe":"Groupe Sud Ouest","pure_player":false,"acpm":true},"la-republique-des-pyrenees":{"nom":"La République des Pyrénées","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"le-populaire-du-centre":{"nom":"Le Populaire du Centre","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"corse-matin":{"nom":"Corse Matin","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"le-berry-republicain":{"nom":"Le Berry Républicain","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"l-est-eclair":{"nom":"L'Est Eclair","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"la-republique-du-centre":{"nom":"La République du Centre","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"l-echo-republicain":{"nom":"L'Echo Républicain","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"l-yonne-republicaine":{"nom":"L'Yonne Républicaine","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"la-presse-de-la-manche":{"nom":"La Presse de la Manche","famille":"PQR","groupe":"SIPA / Ouest-France","pure_player":false,"acpm":true},"le-journal-du-centre":{"nom":"Le Journal du Centre","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"presse-ocean":{"nom":"Presse Océan","famille":"PQR","groupe":"SIPA / Ouest-France","pure_player":false,"acpm":true},"le-journal-de-la-haute-marne":{"nom":"Le Journal de la Haute-Marne","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"centre-presse-aveyron":{"nom":"Centre Presse (Aveyron)","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"le-quotidien-de-la-reunion":{"nom":"Le Quotidien de la Réunion","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"l-aisne-nouvelle":{"nom":"L'Aisne Nouvelle","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"l-eveil-de-la-haute-loire":{"nom":"L'Eveil de la Haute-Loire","famille":"PQR","groupe":"Centre France","pure_player":false,"acpm":true},"la-nouvelle-republique-des-pyrenees":{"nom":"La Nouvelle République des Pyrénées","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"nord-littoral":{"nom":"Nord Littoral","famille":"PQR","groupe":"Rossel","pure_player":false,"acpm":true},"le-petit-bleu-d-agen":{"nom":"Le Petit Bleu d'Agen","famille":"PQR","groupe":"Groupe La Dépêche","pure_player":false,"acpm":true},"centre-presse-poitiers":{"nom":"Centre Presse Poitiers","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"dordogne-libre":{"nom":"Dordogne Libre","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"l-eclair-pyrenees":{"nom":"L'Eclair Pyrénées","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"liberation-champagne":{"nom":"Libération Champagne","famille":"PQR","groupe":"Indépendant","pure_player":false,"acpm":true},"le-point":{"nom":"Le Point","famille":"magazine-news","groupe":"Artémis","pure_player":false,"acpm":true},"le-nouvel-obs":{"nom":"Le Nouvel Obs","famille":"magazine-news","groupe":"Groupe Le Monde","pure_player":false,"acpm":true},"courrier-international":{"nom":"Courrier International","famille":"magazine-news","groupe":"Groupe Le Monde","pure_player":false,"acpm":true},"l-express":{"nom":"L'Express","famille":"magazine-news","groupe":"Groupe Alpha","pure_player":false,"acpm":true},"marianne":{"nom":"Marianne","famille":"magazine-news","groupe":"Indépendant","pure_player":false,"acpm":true},"le-particulier":{"nom":"Le Particulier","famille":"magazine-eco","groupe":"Groupe Le Figaro","pure_player":false,"acpm":true},"challenges":{"nom":"Challenges","famille":"magazine-eco","groupe":"Perdriel","pure_player":false,"acpm":true},"mieux-vivre-votre-argent":{"nom":"Mieux Vivre Votre Argent","famille":"magazine-eco","groupe":"Reworld Media","pure_player":false,"acpm":true},"capital":{"nom":"Capital","famille":"magazine-eco","groupe":"Prisma Media","pure_player":false,"acpm":true},"investir":{"nom":"Investir - Le Journal des Finances","famille":"magazine-eco","groupe":"Les Échos-Le Parisien (LVMH)","pure_player":false,"acpm":true},"alternatives-economiques":{"nom":"Alternatives Économiques","famille":"magazine-eco","groupe":"Indépendant (SCOP)","pure_player":false,"acpm":true},"mediapart":{"nom":"Mediapart","famille":"pure-player","groupe":"Société pour l'Indépendance de Mediapart","pure_player":true,"acpm":false},"blast":{"nom":"Blast","famille":"pure-player","groupe":"Indépendant","pure_player":true,"acpm":false},"les-jours":{"nom":"Les Jours","famille":"pure-player","groupe":"Indépendant","pure_player":true,"acpm":false},"arret-sur-images":{"nom":"Arrêt sur images","famille":"pure-player","groupe":"Indépendant","pure_player":true,"acpm":false},"reporterre":{"nom":"Reporterre","famille":"pure-player","groupe":"Indépendant","pure_player":true,"acpm":false},"sciences-et-avenir":{"nom":"Sciences et Avenir","famille":"magazine-connaissance","groupe":"Perdriel","pure_player":false,"acpm":true},"ca-m-interesse":{"nom":"Ça m'intéresse","famille":"magazine-connaissance","groupe":"Prisma Media","pure_player":false,"acpm":true},"science-et-vie":{"nom":"Science & Vie","famille":"magazine-connaissance","groupe":"Reworld Media","pure_player":false,"acpm":true},"geo":{"nom":"Geo","famille":"magazine-connaissance","groupe":"Prisma Media","pure_player":false,"acpm":true},"beaux-arts-magazine":{"nom":"Beaux Arts Magazine","famille":"magazine-connaissance","groupe":"Beaux Arts & Cie","pure_player":false,"acpm":true},"historia":{"nom":"Historia","famille":"magazine-connaissance","groupe":"Sophia Publications","pure_player":false,"acpm":true},"jdd":{"nom":"Le Journal du Dimanche","famille":"magazine-news","groupe":"Lagardère News","pure_player":false,"acpm":true},"la-tribune":{"nom":"La Tribune","famille":"magazine-eco","groupe":"La Tribune","pure_player":false,"acpm":true}},"sources":{"presse-mind-2025":{"citation":"Minted, reprenant le baromètre Mind Media des abonnements numériques au 31/12/2025 (Le Monde 602 000)","url":"https://www.mntd.fr/presse-en-ligne-les-abonnements-numeriques-ne-decollent-pas-quel-est-le-plan-b/","acces":"public","date":"2026-03"},"figaro-resultats-2024":{"citation":"Influencia — résultats 2024 du Groupe Figaro (CA, abonnés numériques)","url":"https://www.influencia.net/145812/","acces":"public","date":"2025-02"},"mediapart-resultats-2025":{"citation":"Mediapart — rapport d'activité 2025 (repris AFP / CB News) : 257 383 abonnés au 31/12/2025, CA 28 M€","url":"https://www.cbnews.fr/cb/257-383-abonnes-mediapart","acces":"public","date":"2026-03"},"equipe-300k-2026":{"citation":"The Media Leader / Fondation Jean-Jaurès — L'Équipe franchit 300 000 abonnés numériques (+18% depuis janv. 2026)","url":"https://fr.themedialeader.com/apres-avoir-atteint-300-000-abonnes-numeriques-lequipe-deploie-son-plus-grand-dispositif-editorial-pour-le-mondial/","acces":"public","date":"2026-05"},"acpm-observatoire-2025":{"citation":"ACPM — Observatoire de la presse 2025 : Diffusion France payée par titre (repris par CB News, avril 2026)","url":"https://www.cbnews.fr/medias/acpm-23-dfp-presse-payante-grand-public-2025","acces":"public","date":"2026-04"},"le-monde-offres":{"citation":"Le Monde — page publique d'abonnement (tarif numérique)","url":"https://www.lemonde.fr/abonnement/","acces":"public","date":"2026"},"mediapart-offres":{"citation":"Mediapart — page publique d'abonnement (12 €/mois)","url":"https://www.mediapart.fr/abonnement","acces":"public","date":"2026"},"acpm-classement-2025":{"citation":"ACPM — Classements de diffusion 2025 (presse quotidienne nationale et régionale), données certifiées","url":"https://www.acpm.fr/classements/pqn","acces":"public","date":"2026"},"les-echos-resultats-2025":{"citation":"Groupe Les Échos — résultats 2025 (DG) : 85 000 abonnés numériques sur 105 000, CA 96,1 M€","url":"https://www.cbinsights.com/company/groupe-les-echos","acces":"public","date":"2026"},"le-figaro-offres":{"citation":"Le Figaro — offre d'abonnement Premium numérique (16,99 €/mois après 1er mois)","url":"https://abo.lefigaro.fr/","acces":"public","date":"2026"},"jean-jaures-medias-2026":{"citation":"Fondation Jean-Jaurès, Observatoire des médias (mai 2026) : Le Monde 602 000, Le Figaro 335 000, Mediapart 257 000 abonnés numériques (~70% du segment info nationale)","url":"https://www.jean-jaures.org/publication/300-000-abonnes-numeriques-a-lequipe-un-exploit-qui-masque-les-limites-du-marche/","acces":"public","date":"2026-05"},"acpm-internet-2026-04":{"citation":"ACPM — Classement Unifié Sites Web Grand Public, avril 2026 (visites mensuelles totales par marque)","url":"https://www.acpm.fr/classements/united-web-sites-gp","acces":"public","date":"2026-04"},"acpm-diffusion-2025":{"citation":"ACPM — Classements Diffusion 2025 (PQN, PQR, Presse Magazine) : Diffusion France Payée (DFP) par titre","url":"https://www.acpm.fr/classements/pqn","acces":"public","date":"2026-02"},"ouest-france-plein-cap-2026":{"citation":"Ouest-France — Fabrice Bazard (DG), déclaration publique du 15 mai 2026 (plan « Plein Cap ») : 200 000 abonnés numériques payants, objectif 300 000 d'ici 2028","url":"https://refrance.fr/ouest-france-affiche-77-millions-deuros-de-resultat-dexploitation-en-2025-le-dg-fabrice-bazard-publie-un-plan-de-cap-numerique-et-lance-plein-cap-pour-atteindre-300-000-abonnes-d/","acces":"public","date":"2026-05"},"le-parisien-abonnes-2024":{"citation":"Le Parisien (Sophie Gourmelen, DG) via The Media Leader, mars 2024 : « plus de 100 000 abonnés numériques »","url":"https://fr.themedialeader.com/le-parisien-lance-une-offre-dabonnement-numerique-gratuit-pour-les-15-25-ans/","acces":"public","date":"2024-03"}},"certain":{"abonnes_num":{"_meta":{"metrique":"abonnes_num","libelle":"Abonnés purs numériques (web)","unite":"abonnés","couche":"certain","source":"presse-mind-2025","periode":"2025-12","note":"COUCHE CERTAINE : uniquement des chiffres publiquement annoncés/rapportés. Le baromètre Mind Media (≈40 sites, payant) n'est PAS republié. Hors ces titres, abonnes_num est estimé (cascade diffusion -> famille)."},"valeurs":{"le-monde":602000,"le-figaro":{"valeur":335000,"source":"jean-jaures-medias-2026","periode":"2026-05"},"mediapart":{"valeur":257383,"source":"mediapart-resultats-2025","periode":"2025-12"},"l-equipe":{"valeur":300000,"source":"equipe-300k-2026","periode":"2026-05"},"les-echos":{"valeur":85000,"source":"les-echos-resultats-2025","periode":"2025-12"},"ouest-france":{"valeur":200000,"source":"ouest-france-plein-cap-2026","periode":"2026-05"},"le-parisien":{"valeur":100000,"source":"le-parisien-abonnes-2024","periode":"2024-03","confiance":"plancher déclaré"}}},"diffusion_payee":{"_meta":{"metrique":"diffusion_payee","libelle":"Diffusion France payée (DFP) — print + numérique, moyenne par parution/numéro","unite":"exemplaires","couche":"certain","source":"acpm-diffusion-2025","periode":"2025 (DFP annuelle)","note":"PQN et PQR : classements de diffusion ACPM 2025 (titres individuels, hors couplages). Magazines : Observatoire ACPM 2025 (repris CB News). Ancre l'estimation de abonnes_num."},"valeurs":{"le-monde":559250,"le-figaro":386769,"l-equipe":237817,"le-parisien":192505,"les-echos":141021,"liberation":117465,"la-croix":75902,"l-humanite":39807,"nyt-international":6766,"ouest-france":581505,"sud-ouest":164510,"le-telegramme":158890,"la-voix-du-nord":149013,"le-dauphine-libere":133386,"la-nouvelle-republique":115960,"le-progres":114293,"la-montagne":105886,"dna":103337,"la-depeche-du-midi":95874,"l-est-republicain":90340,"le-republicain-lorrain":69052,"le-courrier-de-l-ouest":63920,"midi-libre":63102,"l-union-l-ardennais":59133,"la-provence":51267,"l-alsace":46699,"nice-matin":45210,"le-journal-de-saone-et-loire":38061,"l-independant":34194,"le-courrier-picard":33704,"var-matin":31419,"le-bien-public":28990,"paris-normandie":27715,"le-maine-libre":27076,"vosges-matin":25771,"charente-libre":25454,"la-republique-des-pyrenees":23408,"le-populaire-du-centre":20568,"corse-matin":20040,"le-berry-republicain":18948,"l-est-eclair":18573,"la-republique-du-centre":18444,"l-echo-republicain":16071,"l-yonne-republicaine":16008,"la-presse-de-la-manche":15738,"le-journal-du-centre":15374,"presse-ocean":15258,"le-journal-de-la-haute-marne":14731,"centre-presse-aveyron":14449,"le-quotidien-de-la-reunion":11954,"l-aisne-nouvelle":11094,"l-eveil-de-la-haute-loire":10885,"la-nouvelle-republique-des-pyrenees":7824,"nord-littoral":5844,"le-petit-bleu-d-agen":5692,"centre-presse-poitiers":4886,"dordogne-libre":4111,"l-eclair-pyrenees":4080,"liberation-champagne":2210,"le-point":183513,"le-nouvel-obs":165073,"courrier-international":{"valeur":161466,"source":"acpm-observatoire-2025"},"l-express":246671,"marianne":106990,"le-particulier":{"valeur":229955,"source":"acpm-observatoire-2025"},"challenges":76957,"mieux-vivre-votre-argent":91806,"capital":296703,"investir":{"valeur":65736,"source":"acpm-observatoire-2025"},"sciences-et-avenir":162551,"ca-m-interesse":168897,"science-et-vie":340891,"geo":318617,"beaux-arts-magazine":{"valeur":66569,"source":"acpm-observatoire-2025"},"historia":175060,"jdd":78892,"la-tribune":48362}},"visites":{"_meta":{"metrique":"visites","libelle":"Visites mensuelles totales (fixe+mobile) de la marque numérique","unite":"visites/mois","couche":"certain","source":"acpm-internet-2026-04","periode":"avril 2026","note":"Classement Unifié ACPM Sites Web Grand Public (avril 2026), extrait via Claude for Chrome. Mois unique (pas une moyenne). Titres non adhérents ACPM / pure-players paywall restent estimés."},"valeurs":{"capital":15278090,"centre-presse-aveyron":5740487,"challenges":5329829,"charente-libre":6491276,"corse-matin":2950415,"courrier-international":10851066,"dna":6622419,"dordogne-libre":364968,"geo":9870836,"jdd":3830466,"l-alsace":3412112,"l-echo-republicain":2314615,"l-equipe":82011472,"l-est-eclair":1590964,"l-est-republicain":617700,"l-eveil-de-la-haute-loire":869083,"l-express":12847674,"l-humanite":6577815,"l-independant":22768560,"l-opinion":1836255,"l-union-l-ardennais":8087355,"l-yonne-republicaine":2051746,"la-croix":4450175,"la-depeche-du-midi":62712450,"la-montagne":13391867,"la-nouvelle-republique":17626717,"la-nouvelle-republique-des-pyrenees":2039156,"la-provence":13147070,"la-republique-des-pyrenees":9102944,"la-republique-du-centre":4146495,"la-tribune":6481119,"la-voix-du-nord":18762080,"le-berry-republicain":2837944,"le-bien-public":4003637,"le-courrier-picard":3728553,"le-dauphine-libere":30429235,"le-figaro":174869224,"le-journal-de-la-haute-marne":138143,"le-journal-de-saone-et-loire":6021861,"le-journal-du-centre":2074866,"le-monde":149401793,"le-nouvel-obs":14053901,"le-parisien":69122329,"le-petit-bleu-d-agen":2171431,"le-point":11918884,"le-populaire-du-centre":2252034,"le-progres":25065064,"le-quotidien-de-la-reunion":374821,"le-republicain-lorrain":7070627,"le-telegramme":21801686,"les-echos":31048382,"liberation":25873852,"liberation-champagne":38295,"marianne":6133892,"midi-libre":40057119,"nice-matin":11244863,"nord-littoral":2051544,"ouest-france":201032683,"paris-normandie":3717228,"science-et-vie":10555452,"sud-ouest":39114038,"vosges-matin":3831901}}},"marche":{"total_abonnements_numeriques":{"valeur":3300000,"unite":"abonnements","source":"presse-mind-2025","periode":"2025-12"},"croissance_annuelle":{"valeur":0.07,"unite":"ratio","source":"presse-mind-2025","periode":"2025"},"part_versions_numeriques_dfp":{"valeur":0.31,"unite":"ratio","source":"acpm-observatoire-2025","periode":"2025"}},"parametres":{"_meta":{"description":"COUCHE ESTIMATION — méthodologie. On stocke les MÉTHODES et COEFFICIENTS, jamais des valeurs estimées figées (elles sont recalculées par le modèle). Ce fichier n'est PAS modifiable dans l'appli : tout changement passe par une PR.","version":"1.0"},"familles":{"_doc":"Défauts par famille. arpu_defaut = ARPU abonnement mensuel estimé par défaut (€). Socle des cascades d'estimation.","PQN":{"arpu_defaut":13,"conv_diffusion_abonnes":0.45,"audience_coef":1,"inference_coef":1.25,"visites_par_abonne":500},"PQR":{"arpu_defaut":9,"conv_diffusion_abonnes":0.15,"audience_coef":1.1,"inference_coef":1.3,"visites_par_abonne":2000},"magazine-news":{"arpu_defaut":8.5,"conv_diffusion_abonnes":0.35,"audience_coef":0.8,"inference_coef":0.7,"visites_par_abonne":700},"magazine-eco":{"arpu_defaut":12,"conv_diffusion_abonnes":0.3,"audience_coef":0.7,"inference_coef":0.65,"visites_par_abonne":400},"pure-player":{"arpu_defaut":10,"conv_diffusion_abonnes":1,"audience_coef":0.9,"inference_coef":0.8,"visites_par_abonne":250},"magazine-connaissance":{"arpu_defaut":6.5,"conv_diffusion_abonnes":0.12,"audience_coef":0.7,"inference_coef":0.75,"visites_par_abonne":700}},"abonnes_num":{"_doc":"Cascade d'estimation quand abonnes_num n'est ni certain ni en override.","cascade":["1. valeur certaine (data/certain/abonnes_num.json)","2. override explicite (data/estimation/overrides.json > abonnes_num)","3. depuis la diffusion : diffusion_payee * familles[f].conv_diffusion_abonnes","4. défaut famille (peu fiable) : familles[f].abonnes_defaut","5. sinon : inconnu (non inventé)"],"abonnes_defaut_par_famille":{"PQN":60000,"PQR":50000,"magazine-news":45000,"magazine-eco":30000,"pure-player":25000,"magazine-connaissance":25000}},"arpu":{"_doc":"ARPU abonnement mensuel ESTIMÉ par titre (revenu moyen par abonné, jamais un prix catalogue). Rarement public : seul Mediapart est calculable depuis son CA. Sinon override à dire d'expert ou défaut de famille.","cascade":["1. override explicite (overrides.json > arpu)","2. ARPU par défaut de la famille (familles[f].arpu_defaut)"]},"cle_audience":{"_doc":"Indice d'audience = VISITES du titre (certain si publié par l'ACPM, sinon estimé = abonnés × visites_par_abonne[famille]). L'option ne fait que repondérer.","defaut":"temps_de_lecture","options":["temps_de_lecture","pages_vues","lecteurs_uniques"],"facteur_option":{"temps_de_lecture":1,"pages_vues":0.9,"lecteurs_uniques":1.1},"note":"Les visites (ACPM) remplacent l'ancien proxy abonnés×coef. Le temps de lecture réel (Médiamétrie, payant) reste hors d'atteinte : visites = meilleur proxy public."},"indice_inference":{"_doc":"Indice d'inférence par titre, base de la répartition du pool IA (inférences brutes, modèle TollBit).","methode":"indice_inference = abonnes_num * familles[f].inference_coef","note":"Inférences brutes : pondère le volume de contenu accessible, pas la qualité de citation. Aucune mesure réelle disponible → estimation."},"longue_traine":{"_doc":"Le résidu = total marché certifié - somme des titres connus. Caractérisé par des moyennes.","arpu_defaut":8,"audience_coef":1,"inference_coef":1,"confiance":"faible","visites_par_abonne":400},"conversions":{"_doc":"Ratios structurels.","dedoublonnage_abonnements_payeurs":1.27,"note":"Un payeur unique peut détenir plusieurs abonnements. Payeurs uniques = abonnements / 1,27."},"attribution_net_new":{"_doc":"Qui 'apporte' les nouveaux payeurs (part apporteur).","migrants":"attribués à leur titre actuel (eux-mêmes)","net_new":"répartis selon la force d'acquisition, par défaut au prorata de la base d'abonnés actuelle"}},"overrides":{"_meta":{"description":"COUCHE ESTIMATION — overrides explicites (estimations assumées). Chaque valeur porte confiance + méthode.","confiance":"haute | moyenne | faible","note":"Plus aucun override d'abonnes_num : tous estimés depuis la diffusion ACPM. Les ARPU sont des ESTIMATIONS (pas des prix) : Mediapart calculé sur son CA réel (haute confiance), les autres à dire d'expert à partir du positionnement et des offres publiques."},"abonnes_num":{},"arpu":{"le-monde":{"valeur":13,"confiance":"moyenne","methode":"ARPU estimé (offre numérique ~12,99 €, formules annuelles)","source":"le-monde-offres"},"le-figaro":{"valeur":14.5,"confiance":"moyenne","methode":"ARPU estimé (offre Premium ~16,99 €, net de promos)","source":"le-figaro-offres"},"les-echos":{"valeur":25,"confiance":"moyenne","methode":"ARPU estimé (positionnement premium / B2B)"},"mediapart":{"valeur":9.1,"confiance":"haute","methode":"ARPU réel = CA public 28 M€ / 257 383 abonnés / 12 mois","source":"mediapart-resultats-2025"},"l-equipe":{"valeur":10,"confiance":"faible","methode":"ARPU estimé"}}},"hypotheses":{"_meta":{"description":"COUCHE HYPOTHÈSE — les leviers de scénario. Les valeurs par défaut et les presets sont modifiables uniquement par PR ; l'utilisateur de l'appli les manipule en session (éphémère, non persisté).","version":"1.0"},"leviers":{"prix_pass":{"valeur":15,"unite":"€/mois","min":8,"max":25,"pas":1,"aide":"Prix mensuel du pass tout-accès."},"taux_migration":{"valeur":0.7,"unite":"ratio","min":0,"max":1,"pas":0.05,"aide":"Part des payeurs actuels qui adoptent le pass."},"net_new":{"valeur":1600000,"unite":"payeurs","min":0,"max":5000000,"pas":100000,"aide":"Nouveaux payeurs nets recrutés par le pass (au-delà de la migration)."},"part_apporteur":{"valeur":0.5,"unite":"ratio","min":0,"max":1,"pas":0.05,"aide":"Part de la licence reversée à l'éditeur qui a recruté l'abonné. Le reste alimente le pool audience."},"cle_audience":{"valeur":"temps_de_lecture","options":["temps_de_lecture","pages_vues","lecteurs_uniques"],"aide":"Clé de répartition de la part audience (les 1 - part_apporteur restants)."},"enveloppe_ia":{"valeur":80000000,"unite":"€/an","min":0,"max":300000000,"pas":5000000,"aide":"Enveloppe annuelle négociée avec les acteurs IA. Répartie à 100% aux inférences brutes (modèle TollBit). Pas de take rate : structure gérée par les éditeurs (frais de gestion hors périmètre)."}},"scenarios":{"_doc":"Presets. Repris des hypothèses calibrées du modèle initial.","cannibalisation":{"prix_pass":12,"taux_migration":0.8,"net_new":300000,"part_apporteur":0.5,"cle_audience":"temps_de_lecture","enveloppe_ia":30000000},"expansion":{"prix_pass":15,"taux_migration":0.7,"net_new":1600000,"part_apporteur":0.5,"cle_audience":"temps_de_lecture","enveloppe_ia":80000000},"streaming":{"prix_pass":18,"taux_migration":0.6,"net_new":3300000,"part_apporteur":0.5,"cle_audience":"temps_de_lecture","enveloppe_ia":200000000}},"defaut":"expansion"}};
+
+/* =================== utils =================== */
+const $ = (s,r=document)=>r.querySelector(s);
+const fmtM = n => (n/1e6).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' M€';
+const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
+const fmtPct = x => (x*100).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
+const fmtDelta = x => x==null ? '—' : (x>=0?'+':'')+(x*100).toFixed(0)+' %';
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function provBadge(r){
+  if(!r) return '';
+  if(r.couche==='certain'){
+    const src = DATASET.sources[r.source]; const t = src ? src.citation : (r.source||'source publique');
+    return `<span class="chip cert" title="${esc(t)}"><span class="dotk" style="background:var(--cert)"></span>sourcé</span>`;
+  }
+  const t = (r.methode||'estimation')+(r.confiance?` · confiance ${r.confiance}`:'');
+  return `<span class="chip est" title="${esc(t)}"><span class="dotk" style="background:var(--est)"></span>estimé</span>`;
+}
+
+/* =================== état =================== */
+const LEVIERS = DATASET.hypotheses.leviers;
+let state = hypothesesDepuisScenario(DATASET, DATASET.hypotheses.defaut);
+let view = 'marche';          // 'marche' | 'editeur'
+let currentEditeur = 'les-echos';
+let localOverride = {};       // id -> {abonnes, arpu, visites}
+
+/* lecture URL */
+(function readURL(){
+  const q = new URLSearchParams(location.search);
+  const m = {p:'prix_pass',mig:'taux_migration',nn:'net_new',ap:'part_apporteur',ia:'enveloppe_ia'};
+  for(const [k,key] of Object.entries(m)) if(q.has(k)) state[key]=parseFloat(q.get(k));
+  if(q.has('cle')) state.cle_audience=q.get('cle');
+  if(q.get('v')==='editeur'){ view='editeur'; if(q.get('t')) currentEditeur=q.get('t'); }
+})();
+function writeURL(){
+  const q = new URLSearchParams();
+  q.set('p',state.prix_pass); q.set('mig',state.taux_migration); q.set('nn',state.net_new);
+  q.set('ap',state.part_apporteur); q.set('cle',state.cle_audience); q.set('ia',state.enveloppe_ia);
+  q.set('v',view); if(view==='editeur') q.set('t',currentEditeur);
+  history.replaceState(null,'',location.pathname+'?'+q.toString());
+}
+
+/* dataset effectif (avec overrides locaux « je suis cet éditeur ») */
+function effectiveDataset(){
+  if(!Object.keys(localOverride).length) return DATASET;
+  const d = JSON.parse(JSON.stringify(DATASET));
+  for(const [id,o] of Object.entries(localOverride)){
+    if(o.abonnes!=null) d.certain.abonnes_num.valeurs[id]={valeur:o.abonnes,source:'saisie-editeur'};
+    if(o.visites!=null) d.certain.visites.valeurs[id]={valeur:o.visites,source:'saisie-editeur'};
+    if(o.arpu!=null){ d.overrides.arpu=d.overrides.arpu||{}; d.overrides.arpu[id]={valeur:o.arpu,methode:'saisie éditeur',confiance:'déclaré'}; }
+  }
+  d.sources['saisie-editeur']={citation:'Saisie locale de l\u2019éditeur (éphémère, non partagée)',acces:'local'};
+  return d;
+}
+
+/* =================== rail =================== */
+function buildRail(){
+  // presets
+  const pres = $('#presets'); pres.innerHTML='';
+  Object.keys(DATASET.hypotheses.scenarios).filter(k=>k[0]!=='_').forEach(name=>{
+    const b=document.createElement('button'); b.className='preset'; b.textContent=name[0].toUpperCase()+name.slice(1);
+    b.onclick=()=>{ state=hypothesesDepuisScenario(DATASET,name); localOverride={}; buildRail(); render(); };
+    pres.appendChild(b);
+  });
+  // leviers
+  const host=$('#leviers'); host.innerHTML='';
+  host.insertAdjacentHTML('beforeend','<p class="grp">Abonnés</p>');
+  slider(host,'prix_pass',v=>v+' €'); slider(host,'taux_migration',v=>Math.round(v*100)+' %');
+  slider(host,'net_new',v=>(v/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1})+' M');
+  slider(host,'part_apporteur',v=>Math.round(v*100)+' %'); selectCle(host);
+  host.insertAdjacentHTML('beforeend','<p class="grp">Pool IA</p>');
+  slider(host,'enveloppe_ia',v=>(v/1e6).toLocaleString('fr-FR')+' M€');
+  // refléter preset actif
+  markPreset();
+}
+function markPreset(){
+  document.querySelectorAll('.preset').forEach(b=>{
+    const sc=DATASET.hypotheses.scenarios[b.textContent.toLowerCase()];
+    b.classList.toggle('on', sc && ['prix_pass','taux_migration','net_new','part_apporteur','enveloppe_ia','cle_audience'].every(k=>sc[k]===state[k]));
+  });
+}
+function slider(host,key,fmt){
+  const L=LEVIERS[key];
+  const el=document.createElement('div'); el.className='sl';
+  el.innerHTML=`<div class="lab"><span>${labelOf(key)}<span class="i" title="${esc(L.aide)}">i</span></span><span class="val" id="v_${key}">${fmt(state[key])}</span></div>
+    <input type="range" min="${L.min}" max="${L.max}" step="${L.pas}" value="${state[key]}">`;
+  el.querySelector('input').oninput=e=>{ state[key]=parseFloat(e.target.value); $('#v_'+key).textContent=fmt(state[key]); markPreset(); render(); };
+  host.appendChild(el);
+}
+function selectCle(host){
+  const L=LEVIERS.cle_audience;
+  const el=document.createElement('div'); el.className='sl';
+  el.innerHTML=`<div class="lab"><span>Clé d'audience<span class="i" title="${esc(L.aide)}">i</span></span></div>
+    <select>${L.options.map(o=>`<option value="${o}" ${o===state.cle_audience?'selected':''}>${o.replace(/_/g,' ')}</option>`).join('')}</select>`;
+  el.querySelector('select').onchange=e=>{ state.cle_audience=e.target.value; markPreset(); render(); };
+  host.appendChild(el);
+}
+const LABELS={prix_pass:'Prix du pass',taux_migration:'Migration',net_new:'Net-new payeurs',part_apporteur:"Part à l'apporteur",enveloppe_ia:'Enveloppe IA'};
+const labelOf=k=>LABELS[k]||k;
+
+/* =================== rendu =================== */
+function render(){
+  const res = runModel(effectiveDataset(), state);
+  document.querySelectorAll('#toggle button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  if(view==='marche') renderMarche(res); else renderEditeur(res);
+  writeURL();
+}
+
+function renderMarche(res){
+  const k=res.kpis;
+  const dRev=k.deltaRevenuTotal, dPay=k.deltaPayeurs;
+  const titres=res.titres.filter(t=>t.id!=='longue-traine');
+  const top=titres.slice(0,10);
+  const maxAbs=Math.max(...top.map(t=>Math.abs(t.delta||0)),0.01);
+  $('#main').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="k">Revenu total</div><div class="v">${fmtM(k.revenuTotal)}</div>
+        <div class="delta ${dRev>=0?'up':'down'}">${fmtDelta(dRev)} <small>vs aujourd'hui</small></div></div>
+      <div class="kpi"><div class="k">Payeurs</div><div class="v">${fmtInt(k.payeurs)}</div>
+        <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)}</small></div></div>
+      <div class="kpi"><div class="k">Pool abonnements</div><div class="v">${fmtM(k.poolAbonnements)}</div>
+        <div class="delta" style="color:var(--ink3)">redistribué</div></div>
+      <div class="kpi"><div class="k">Pool IA</div><div class="v">${fmtM(k.poolIA)}</div>
+        <div class="tag-new">nouveau</div></div>
+    </div>
+    <div class="sech">Top 10 éditeurs — effet sur le revenu</div>
+    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu</th></tr></thead>
+    <tbody>${top.map((t,i)=>{
+      const w=Math.abs(t.delta||0)/maxAbs*100, pos=(t.delta||0)>=0;
+      return `<tr data-id="${t.id}">
+        <td class="rk">${i+1}</td>
+        <td><div class="nm">${esc(t.nom)}</div><div class="fam">${esc(t.famille)} · ${esc(t.groupe||'—')}</div></td>
+        <td class="r"><span class="num">${fmtInt(t.abonnes.valeur||0)}</span> ${provBadge(t.abonnes)}</td>
+        <td class="r"><span class="dbar"><span class="delta ${pos?'up':'down'}">${fmtDelta(t.delta)}</span>
+          <span class="t"><i style="${pos?'left:50%':'right:50%'};width:${w/2}%;background:${pos?'var(--win)':'var(--loss)'}"></i></span></span></td>
+      </tr>`;}).join('')}</tbody></table>
+    <p class="hint">Clic sur un titre pour ouvrir sa fiche. Δ = revenu projeté « licence globale » vs revenu d'abonnement actuel. Survole un badge pour la source ou la méthode.</p>`;
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=()=>{ currentEditeur=tr.dataset.id; view='editeur'; localOverride={}; render(); });
+}
+
+function renderEditeur(res){
+  const t=res.titres.find(x=>x.id===currentEditeur) || res.titres[0];
+  currentEditeur=t.id;
+  const k=res.kpis;
+  // split apporteur migrants / net-new selon composition du pass
+  const fracMig=(state.taux_migration*k.payeursActuels)/k.payeurs, fracNew=state.net_new/k.payeurs;
+  const vosAb=t.decomposition.apporteur*fracMig, netNew=t.decomposition.apporteur*fracNew;
+  const aud=t.decomposition.audience, ia=t.decomposition.ia, tot=t.revenuProjete;
+  const rows=[['Vos abonnés',vosAb,'var(--c-app)'],
+              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)'],
+              ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)'],
+              ['Droits voisins IA',ia,'var(--c-ia)']];
+  const maxR=Math.max(...rows.map(r=>r[1]),1);
+  const win=(t.delta||0)>=0;
+  const segs=rows.map(r=>`<i style="width:${tot>0?r[1]/tot*100:0}%;background:${r[2]}"></i>`).join('');
+  const visR=t.visites||{couche:'estimation'};
+  const ov=localOverride[t.id]||{};
+  $('#main').innerHTML=`
+    <p class="crumb"><button id="back">‹ Marché</button> / ${esc(t.nom)}</p>
+    <div class="ehead">
+      <div><div class="h1">${esc(t.nom)}</div>
+        <div class="meta">${esc(t.famille)} · ${esc(t.groupe||'—')} · <span class="num">${fmtInt(t.abonnes.valeur||0)}</span> abonnés ${provBadge(t.abonnes)}</div></div>
+      <div class="verdict ${win?'win':'loss'}"><span class="d num">${fmtDelta(t.delta)}</span><span class="l">${win?'gagnant':'perdant'}</span></div>
+    </div>
+    <div class="cards2">
+      <div class="card"><div class="k">Revenu abonnement actuel</div><div class="v">${fmtM(t.revenuActuel)}<small style="font-size:11px;color:var(--ink3)">/an</small></div></div>
+      <div class="card"><div class="k">Revenu projeté « licence globale »</div><div class="v">${fmtM(t.revenuProjete)} <span class="delta ${win?'up':'down'}" style="font-size:13px">${fmtDelta(t.delta)}</span></div></div>
+    </div>
+    <div class="sech">D'où viendraient vos revenus</div>
+    <div class="rb total"><span class="l">Total projeté</span><span class="t" style="display:flex;height:18px">${segs}</span><span class="a">${fmtM(tot)}</span></div>
+    <div class="rule"></div>
+    ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}</span>
+      <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
+    <div class="sech">Votre poids dans la répartition</div>
+    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes)}
+    ${shareRow('Part de l\u2019audience',t.partAudience,visR)}
+    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'})}
+    <div class="sech">Je suis ${esc(t.nom)} — corriger avec mes chiffres</div>
+    <div class="self">
+      <div class="grid">
+        <div class="field"><label>Abonnés numériques ${provBadge(t.abonnes)}</label><input id="in_ab" value="${ov.abonnes??(t.abonnes.valeur||'')}"></div>
+        <div class="field"><label>ARPU réel (€/mois) ${provBadge(t.arpu)}</label><input id="in_arpu" value="${ov.arpu??(t.arpu.valeur||'')}"></div>
+        <div class="field"><label>Visites / mois ${provBadge(visR)}</label><input id="in_vis" value="${ov.visites??(visR.valeur||'')}"></div>
+        <div class="field"><label>Temps moyen / visite <span class="i" title="Visites × temps = temps de lecture. Pris en compte au niveau marché quand la clé = temps de lecture (à venir) ; ici la saisie des visites suffit à recalculer votre part.">i</span></label><input id="in_tps" placeholder="ex. 4 min" value="${ov.tps??''}"></div>
+      </div>
+      <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Les chiffres publics validés reviennent par PR.</span></div>
+    </div>
+    <p class="footnote">Δ, parts et revenu projeté sont des <b>projections de scénario</b> — ni certaines ni estimées. Les badges ● sourcé / ≈ estimé portent sur les données d'entrée ; au survol, leur source ou méthode.</p>`;
+  $('#back').onclick=()=>{ view='marche'; render(); };
+  const apply=()=>{ const o={}; const ab=parseNum($('#in_ab').value), ar=parseNum($('#in_arpu').value), vi=parseNum($('#in_vis').value), tp=$('#in_tps').value;
+    if(ab) o.abonnes=ab; if(ar) o.arpu=ar; if(vi) o.visites=vi; if(tp) o.tps=tp; localOverride[t.id]=o; render(); };
+  ['in_ab','in_arpu','in_vis'].forEach(id=>$('#'+id).addEventListener('change',apply));
+}
+function parseNum(s){ const n=parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(',','.')); return isNaN(n)?null:n; }
+function shareRow(label,part,resForBadge){
+  return `<div class="share"><span class="l">${provBadge(resForBadge)} ${esc(label)}</span>
+    <span class="t"><i style="width:${Math.min(100,(part||0)*100*8)}%"></i></span>
+    <span class="p">${fmtPct(part||0)}</span></div>`;
+}
+
+/* toggle */
+document.querySelectorAll('#toggle button').forEach(b=>b.onclick=()=>{ view=b.dataset.v; render(); });
+
+buildRail(); render();
+</script>
+</body>
+</html>

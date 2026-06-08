@@ -1,0 +1,11 @@
+{
+  "name": "licence-globale-presse",
+  "version": "1.0.0",
+  "description": "Simulateur économique d'une licence globale pour la presse payante française (pool abonnés + pool IA).",
+  "type": "module",
+  "license": "CC-BY-4.0",
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "run": "node scripts/run.js"
+  }
+}
