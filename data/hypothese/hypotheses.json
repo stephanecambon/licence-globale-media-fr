@@ -6,17 +6,17 @@
 
   "leviers": {
     "prix_pass":       { "valeur": 15,        "unite": "€/mois", "min": 8, "max": 25, "pas": 1,
-                         "aide": "Prix mensuel du pass tout-accès." },
+                         "aide": "Prix mensuel du pass tout-accès. Fixe le pool abonnements = payeurs × prix × 12." },
     "taux_migration":  { "valeur": 0.70,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
-                         "aide": "Part des payeurs actuels qui adoptent le pass." },
+                         "aide": "Part des payeurs actuels qui adoptent le pass ; avec le net-new, détermine le nombre de payeurs et le pool abonnements." },
     "net_new":         { "valeur": 1600000,   "unite": "payeurs","min": 0, "max": 5000000, "pas": 100000,
-                         "aide": "Nouveaux payeurs nets recrutés par le pass (au-delà de la migration)." },
+                         "aide": "Nouveaux payeurs nets recrutés au-delà de la migration ; s'ajoutent aux migrants pour gonfler payeurs et pool abonnements." },
     "part_apporteur":  { "valeur": 0.50,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
-                         "aide": "Part de la licence reversée à l'éditeur qui a recruté l'abonné. Le reste alimente le pool audience." },
+                         "aide": "Part du pool abonnements reversée à l'éditeur qui a apporté l'abonné ; le reste (1 − part) alimente le pool audience." },
     "cle_audience":    { "valeur": "visites", "options": ["visites", "pages_vues"],
-                         "aide": "Clé de répartition de la part audience (les 1 - part_apporteur restants) : visites OU pages vues, deux vraies métriques ACPM par titre. Visiteurs uniques et temps de lecture (Médiamétrie, payant) sont exclus." },
+                         "aide": "Métrique ACPM répartissant le pool audience entre titres : visites (défaut) ou pages vues — visiteurs uniques/temps de lecture exclus (payant)." },
     "enveloppe_ia":    { "valeur": 80000000,  "unite": "€/an",   "min": 0, "max": 300000000, "pas": 5000000,
-                         "aide": "Enveloppe annuelle négociée avec les acteurs IA. Répartie à 100% aux inférences brutes (modèle TollBit). Pas de take rate : structure gérée par les éditeurs (frais de gestion hors périmètre)." }
+                         "aide": "Enveloppe annuelle IA (droits voisins), répartie à 100 % aux inférences brutes sans take rate ; revenu nouveau, en plus du pass." }
   },
 
   "scenarios": {

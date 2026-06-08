@@ -152,9 +152,9 @@
     <button data-v="editeur">Éditeur</button>
   </div>
   <div class="legend">
-    <span class="chip cert"><span class="dotk" style="background:var(--cert)"></span>sourcé</span>
-    <span class="chip est"><span class="dotk" style="background:var(--est)"></span>estimé</span>
-    <span class="chip proj"><span class="dotk" style="background:var(--proj)"></span>projection</span>
+    <span class="chip cert" title="Donnée d'entrée sourcée publiquement (couche certaine)."><span class="dotk" style="background:var(--cert)"></span>sourcé</span>
+    <span class="chip est" title="Donnée d'entrée calculée par méthode ou posée en override documenté (couche estimation)."><span class="dotk" style="background:var(--est)"></span>estimé</span>
+    <span class="chip proj" title="Résultat de scénario (revenu projeté, Δ, parts) — ni certain ni estimé, sans couche."><span class="dotk" style="background:var(--proj)"></span>projection</span>
   </div>
 </div>
 
@@ -290,17 +290,17 @@ function renderMarche(res){
   const maxAbs=Math.max(...top.map(t=>Math.abs(t.delta||0)),0.01);
   $('#main').innerHTML=`
     <div class="kpis">
-      <div class="kpi"><div class="k">Revenu total</div><div class="v">${fmtM(k.revenuTotal)}</div>
+      <div class="kpi"><div class="k">Revenu total <span class="i" title="Revenu total du système = pool abonnements (le pass) + pool IA ; Δ comparé au revenu d'abonnement actuel cumulé.">i</span></div><div class="v">${fmtM(k.revenuTotal)}</div>
         <div class="delta ${dRev>=0?'up':'down'}">${fmtDelta(dRev)} <small>vs aujourd'hui</small></div></div>
-      <div class="kpi"><div class="k">Payeurs</div><div class="v">${fmtInt(k.payeurs)}</div>
+      <div class="kpi"><div class="k">Payeurs <span class="i" title="Payeurs du pass = migration × payeurs actuels + net-new ; payeurs actuels dédoublonnés (1,27 abonnement par payeur).">i</span></div><div class="v">${fmtInt(k.payeurs)}</div>
         <div class="delta ${dPay>=0?'up':'down'}">${fmtDelta(dPay)}</small></div></div>
-      <div class="kpi"><div class="k">Pool abonnements</div><div class="v">${fmtM(k.poolAbonnements)}</div>
+      <div class="kpi"><div class="k">Pool abonnements <span class="i" title="Revenu du pass (payeurs × prix × 12), redistribué aux éditeurs via les pools apporteur et audience.">i</span></div><div class="v">${fmtM(k.poolAbonnements)}</div>
         <div class="delta" style="color:var(--ink3)">redistribué</div></div>
-      <div class="kpi"><div class="k">Pool IA</div><div class="v">${fmtM(k.poolIA)}</div>
+      <div class="kpi"><div class="k">Pool IA <span class="i" title="Enveloppe IA (droits voisins) : revenu nouveau réparti à 100 % aux inférences, sans take rate — pas un % du pass.">i</span></div><div class="v">${fmtM(k.poolIA)}</div>
         <div class="tag-new">nouveau</div></div>
     </div>
     <div class="sech">Top 10 éditeurs — effet sur le revenu</div>
-    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu</th></tr></thead>
+    <table><thead><tr><th></th><th>Titre</th><th class="r">Abonnés</th><th class="r">Δ revenu <span class="i" title="Revenu projeté « licence globale » ÷ revenu d'abonnement actuel − 1. Projection de scénario, sans couche.">i</span></th></tr></thead>
     <tbody>${top.map((t,i)=>{
       const w=Math.abs(t.delta||0)/maxAbs*100, pos=(t.delta||0)>=0;
       return `<tr data-id="${t.id}">
@@ -322,10 +322,10 @@ function renderEditeur(res){
   const fracMig=(state.taux_migration*k.payeursActuels)/k.payeurs, fracNew=state.net_new/k.payeurs;
   const vosAb=t.decomposition.apporteur*fracMig, netNew=t.decomposition.apporteur*fracNew;
   const aud=t.decomposition.audience, ia=t.decomposition.ia, tot=t.revenuProjete;
-  const rows=[['Vos abonnés',vosAb,'var(--c-app)'],
-              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)'],
-              ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)'],
-              ['Droits voisins IA',ia,'var(--c-ia)']];
+  const rows=[['Vos abonnés',vosAb,'var(--c-app)','Part du pool apporteur venant de vos abonnés actuels qui migrent vers le pass.'],
+              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)','Part du pool apporteur venant des nouveaux payeurs, au prorata de votre base (force d’acquisition).'],
+              ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)','Votre part du pool audience, répartie selon la clé active (visites ou pages vues).'],
+              ['Droits voisins IA',ia,'var(--c-ia)','Votre part du pool IA, répartie selon l’indice d’inférence (notionnel, aucune donnée publique).']];
   const maxR=Math.max(...rows.map(r=>r[1]),1);
   const win=(t.delta||0)>=0;
   const segs=rows.map(r=>`<i style="width:${tot>0?r[1]/tot*100:0}%;background:${r[2]}"></i>`).join('');
@@ -348,12 +348,12 @@ function renderEditeur(res){
     <div class="sech">D'où viendraient vos revenus</div>
     <div class="rb total"><span class="l">Total projeté</span><span class="t" style="display:flex;height:18px">${segs}</span><span class="a">${fmtM(tot)}</span></div>
     <div class="rule"></div>
-    ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}</span>
+    ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}<span class="i" title="${esc(r[3])}">i</span></span>
       <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
     <div class="sech">Votre poids dans la répartition</div>
-    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes)}
-    ${shareRow('Part de l\u2019audience ('+audLabel+')',t.partAudience,audR)}
-    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'})}
+    ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes,'Part du titre dans la base d’abonnés totale ; clé du pool apporteur (force d’acquisition). Projection.')}
+    ${shareRow('Part de l\u2019audience ('+audLabel+')',t.partAudience,audR,'Part du titre dans la cl\u00e9 d\u2019audience active ('+audLabel+') ; r\u00e9partit le pool audience. Projection.')}
+    ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'},'Part du titre dans l’indice d’inférence (abonnés × coef) ; indice notionnel, aucune donnée publique. Projection.')}
     <div class="sech">Je suis ${esc(t.nom)} — corriger avec mes chiffres</div>
     <div class="self">
       <div class="grid">
@@ -372,8 +372,9 @@ function renderEditeur(res){
   ['in_ab','in_arpu','in_vis','in_pv'].forEach(id=>$('#'+id).addEventListener('change',apply));
 }
 function parseNum(s){ const n=parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(',','.')); return isNaN(n)?null:n; }
-function shareRow(label,part,resForBadge){
-  return `<div class="share"><span class="l">${provBadge(resForBadge)} ${esc(label)}</span>
+function shareRow(label,part,resForBadge,aide){
+  const info=aide?` <span class="i" title="${esc(aide)}">i</span>`:'';
+  return `<div class="share"><span class="l">${provBadge(resForBadge)} ${esc(label)}${info}</span>
     <span class="t"><i style="width:${Math.min(100,(part||0)*100*8)}%"></i></span>
     <span class="p">${fmtPct(part||0)}</span></div>`;
 }
