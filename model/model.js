@@ -68,6 +68,16 @@ export function resoudreVisites(dataset, id, famille, abonnes) {
            methode: "abonnés × visites_par_abonné (famille)", confiance: "faible" };
 }
 
+// Pages vues mensuelles : certaines (ACPM) sinon estimées (visites résolues × pages_par_visite de la famille).
+export function resoudrePagesVues(dataset, id, famille, visites) {
+  const c = certainOf(dataset, "pages_vues", id);
+  if (c) return c;
+  const fam = dataset.parametres.familles[famille];
+  const r = fam && fam.pages_par_visite != null ? fam.pages_par_visite : 0;
+  return { valeur: Math.round((visites || 0) * r), couche: "estimation",
+           methode: "visites × pages_par_visite (famille)", confiance: "faible" };
+}
+
 // ---- Profil résolu d'un titre -------------------------------------------
 
 export function profilTitre(dataset, id) {
@@ -78,20 +88,26 @@ export function profilTitre(dataset, id) {
   const fam = dataset.parametres.familles[famille] || { inference_coef: 1 };
   const a = abonnes.valeur || 0;
   const visites = resoudreVisites(dataset, id, famille, a);
+  const pagesVues = resoudrePagesVues(dataset, id, famille, visites.valeur);
   return {
     id, nom: t.nom, famille, groupe: t.groupe, pure_player: t.pure_player,
-    abonnes, arpu, visites,
+    abonnes, arpu, visites, pagesVues,
     revenuActuel: a * (arpu.valeur || 0) * 12,
-    indiceAudienceBase: visites.valeur,
     indiceInference: a * fam.inference_coef
   };
+}
+
+// Indice d'audience d'un titre selon la clé choisie (métrique ACPM réelle : visites ou pages vues).
+export function indiceAudience(profil, cleAudience) {
+  const m = cleAudience === "pages_vues" ? profil.pagesVues : profil.visites;
+  return (m && m.valeur) || 0;
 }
 
 // ---- Calcul d'un scénario -----------------------------------------------
 
 export function runModel(dataset, hypotheses) {
   const h = hypotheses;
-  const facteurAudience = dataset.parametres.cle_audience.facteur_option[h.cle_audience] ?? 1;
+  const cleAudience = h.cle_audience === "pages_vues" ? "pages_vues" : "visites";
 
   // Profils des titres connus
   const profils = Object.keys(dataset.titres).map((id) => profilTitre(dataset, id));
@@ -109,7 +125,7 @@ export function runModel(dataset, hypotheses) {
       arpu: { valeur: lt.arpu_defaut, couche: "estimation", methode: "défaut longue traîne", confiance: "faible" },
       revenuActuel: abonnesLT * lt.arpu_defaut * 12,
       visites: { valeur: abonnesLT * (lt.visites_par_abonne || 0), couche: "estimation", methode: "longue traîne × visites_par_abonné", confiance: "faible" },
-      indiceAudienceBase: abonnesLT * (lt.visites_par_abonne || 0),
+      pagesVues: { valeur: Math.round(abonnesLT * (lt.visites_par_abonne || 0) * (lt.pages_par_visite || 0)), couche: "estimation", methode: "longue traîne : visites × pages_par_visite", confiance: "faible" },
       indiceInference: abonnesLT * lt.inference_coef
     });
   }
@@ -130,12 +146,12 @@ export function runModel(dataset, hypotheses) {
   const poolIA = h.enveloppe_ia;
 
   const sommeBase = totalAbonnements || 1;
-  const sommeAudience = profils.reduce((s, p) => s + p.indiceAudienceBase * facteurAudience, 0) || 1;
+  const sommeAudience = profils.reduce((s, p) => s + indiceAudience(p, cleAudience), 0) || 1;
   const sommeInference = profils.reduce((s, p) => s + p.indiceInference, 0) || 1;
 
   const titres = profils.map((p) => {
     const partBase = (p.abonnes.valeur || 0) / sommeBase;            // force d'acquisition (apporteur)
-    const partAudience = (p.indiceAudienceBase * facteurAudience) / sommeAudience;
+    const partAudience = indiceAudience(p, cleAudience) / sommeAudience;
     const partInference = p.indiceInference / sommeInference;
     const revApporteur = poolApporteur * partBase;
     const revAudience = poolAudience * partAudience;
@@ -144,7 +160,8 @@ export function runModel(dataset, hypotheses) {
     const delta = p.revenuActuel > 0 ? revenuProjete / p.revenuActuel - 1 : null;
     return {
       id: p.id, nom: p.nom, famille: p.famille, groupe: p.groupe,
-      abonnes: p.abonnes, arpu: p.arpu, visites: p.visites,
+      abonnes: p.abonnes, arpu: p.arpu, visites: p.visites, pagesVues: p.pagesVues,
+      cleAudience,
       revenuActuel: p.revenuActuel,
       revenuProjete,
       decomposition: { apporteur: revApporteur, audience: revAudience, ia: revIA },

@@ -19,7 +19,7 @@ function checkSource(srcId, contexte) {
 }
 
 // Métriques certaines par titre
-for (const m of ["abonnes_num", "diffusion_payee", "visites"]) {
+for (const m of ["abonnes_num", "diffusion_payee", "visites", "pages_vues"]) {
   const f = d.certain[m];
   for (const [id, raw] of Object.entries(f.valeurs)) {
     if (!titres[id]) erreurs.push(`certain/${m} : titre_id inconnu « ${id} »`);

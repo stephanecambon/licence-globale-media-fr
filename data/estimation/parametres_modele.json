@@ -10,42 +10,48 @@
       "conv_diffusion_abonnes": 0.45,
       "audience_coef": 1.0,
       "inference_coef": 1.25,
-      "visites_par_abonne": 500
+      "visites_par_abonne": 500,
+      "pages_par_visite": 1.7
     },
     "PQR": {
       "arpu_defaut": 9.0,
       "conv_diffusion_abonnes": 0.15,
       "audience_coef": 1.1,
       "inference_coef": 1.3,
-      "visites_par_abonne": 2000
+      "visites_par_abonne": 2000,
+      "pages_par_visite": 2.0
     },
     "magazine-news": {
       "arpu_defaut": 8.5,
       "conv_diffusion_abonnes": 0.35,
       "audience_coef": 0.8,
       "inference_coef": 0.7,
-      "visites_par_abonne": 700
+      "visites_par_abonne": 700,
+      "pages_par_visite": 1.6
     },
     "magazine-eco": {
       "arpu_defaut": 12.0,
       "conv_diffusion_abonnes": 0.3,
       "audience_coef": 0.7,
       "inference_coef": 0.65,
-      "visites_par_abonne": 400
+      "visites_par_abonne": 400,
+      "pages_par_visite": 1.4
     },
     "pure-player": {
       "arpu_defaut": 10.0,
       "conv_diffusion_abonnes": 1.0,
       "audience_coef": 0.9,
       "inference_coef": 0.8,
-      "visites_par_abonne": 250
+      "visites_par_abonne": 250,
+      "pages_par_visite": 1.6
     },
     "magazine-connaissance": {
       "arpu_defaut": 6.5,
       "conv_diffusion_abonnes": 0.12,
       "audience_coef": 0.7,
       "inference_coef": 0.75,
-      "visites_par_abonne": 700
+      "visites_par_abonne": 700,
+      "pages_par_visite": 1.55
     }
   },
   "abonnes_num": {
@@ -74,19 +80,14 @@
     ]
   },
   "cle_audience": {
-    "_doc": "Indice d'audience = VISITES du titre (certain si publié par l'ACPM, sinon estimé = abonnés × visites_par_abonne[famille]). L'option ne fait que repondérer.",
-    "defaut": "temps_de_lecture",
+    "_doc": "Clé de répartition du pool audience = une VRAIE métrique ACPM par titre, au choix : visites OU pages vues (toutes deux publiées au Classement Unifié ACPM, certaines si présentes, sinon estimées). Changer de clé redistribue réellement : un titre très engageant (pages/visite élevé) pèse davantage en pages_vues.",
+    "defaut": "visites",
     "options": [
-      "temps_de_lecture",
-      "pages_vues",
-      "lecteurs_uniques"
+      "visites",
+      "pages_vues"
     ],
-    "facteur_option": {
-      "temps_de_lecture": 1.0,
-      "pages_vues": 0.9,
-      "lecteurs_uniques": 1.1
-    },
-    "note": "Les visites (ACPM) remplacent l'ancien proxy abonnés×coef. Le temps de lecture réel (Médiamétrie, payant) reste hors d'atteinte : visites = meilleur proxy public."
+    "estimation_pages_vues": "pages_vues = visites_resolues × pages_par_visite[famille] quand la pages vue ACPM n'est pas certaine",
+    "note": "Métriques NON retenues car non sourçables publiquement : visiteurs uniques et temps de lecture relèvent de Médiamétrie (payant) → exclus par la règle anti-source-payante. Les coefficients pages_par_visite par famille sont calibrés sur les 59 paires certaines (médiane du ratio pages/visite)."
   },
   "indice_inference": {
     "_doc": "Indice d'inférence par titre, base de la répartition du pool IA (inférences brutes, modèle TollBit).",
@@ -99,7 +100,8 @@
     "audience_coef": 1.0,
     "inference_coef": 1.0,
     "confiance": "faible",
-    "visites_par_abonne": 400
+    "visites_par_abonne": 400,
+    "pages_par_visite": 1.7
   },
   "conversions": {
     "_doc": "Ratios structurels.",

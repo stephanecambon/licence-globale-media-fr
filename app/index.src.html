@@ -220,6 +220,7 @@ function effectiveDataset(){
   for(const [id,o] of Object.entries(localOverride)){
     if(o.abonnes!=null) d.certain.abonnes_num.valeurs[id]={valeur:o.abonnes,source:'saisie-editeur'};
     if(o.visites!=null) d.certain.visites.valeurs[id]={valeur:o.visites,source:'saisie-editeur'};
+    if(o.pagesVues!=null) d.certain.pages_vues.valeurs[id]={valeur:o.pagesVues,source:'saisie-editeur'};
     if(o.arpu!=null){ d.overrides.arpu=d.overrides.arpu||{}; d.overrides.arpu[id]={valeur:o.arpu,methode:'saisie éditeur',confiance:'déclaré'}; }
   }
   d.sources['saisie-editeur']={citation:'Saisie locale de l\u2019éditeur (éphémère, non partagée)',acces:'local'};
@@ -263,8 +264,9 @@ function slider(host,key,fmt){
 function selectCle(host){
   const L=LEVIERS.cle_audience;
   const el=document.createElement('div'); el.className='sl';
+  const CLE_LABELS={visites:'Visites',pages_vues:'Pages vues'};
   el.innerHTML=`<div class="lab"><span>Clé d'audience<span class="i" title="${esc(L.aide)}">i</span></span></div>
-    <select>${L.options.map(o=>`<option value="${o}" ${o===state.cle_audience?'selected':''}>${o.replace(/_/g,' ')}</option>`).join('')}</select>`;
+    <select>${L.options.map(o=>`<option value="${o}" ${o===state.cle_audience?'selected':''}>${CLE_LABELS[o]||o.replace(/_/g,' ')}</option>`).join('')}</select>`;
   el.querySelector('select').onchange=e=>{ state.cle_audience=e.target.value; markPreset(); render(); };
   host.appendChild(el);
 }
@@ -327,6 +329,9 @@ function renderEditeur(res){
   const win=(t.delta||0)>=0;
   const segs=rows.map(r=>`<i style="width:${tot>0?r[1]/tot*100:0}%;background:${r[2]}"></i>`).join('');
   const visR=t.visites||{couche:'estimation'};
+  const pvR=t.pagesVues||{couche:'estimation'};
+  const audR=t.cleAudience==='pages_vues'?pvR:visR;
+  const audLabel=t.cleAudience==='pages_vues'?'pages vues':'visites';
   const ov=localOverride[t.id]||{};
   $('#main').innerHTML=`
     <p class="crumb"><button id="back">‹ Marché</button> / ${esc(t.nom)}</p>
@@ -346,7 +351,7 @@ function renderEditeur(res){
       <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
     <div class="sech">Votre poids dans la répartition</div>
     ${shareRow('Part de la base abonnés',t.partApporteur,t.abonnes)}
-    ${shareRow('Part de l\u2019audience',t.partAudience,visR)}
+    ${shareRow('Part de l\u2019audience ('+audLabel+')',t.partAudience,audR)}
     ${shareRow('Part des inférences IA',t.partInference,{couche:'estimation',methode:'indice notionnel (aucune donnée publique)'})}
     <div class="sech">Je suis ${esc(t.nom)} — corriger avec mes chiffres</div>
     <div class="self">
@@ -354,15 +359,15 @@ function renderEditeur(res){
         <div class="field"><label>Abonnés numériques ${provBadge(t.abonnes)}</label><input id="in_ab" value="${ov.abonnes??(t.abonnes.valeur||'')}"></div>
         <div class="field"><label>ARPU réel (€/mois) ${provBadge(t.arpu)}</label><input id="in_arpu" value="${ov.arpu??(t.arpu.valeur||'')}"></div>
         <div class="field"><label>Visites / mois ${provBadge(visR)}</label><input id="in_vis" value="${ov.visites??(visR.valeur||'')}"></div>
-        <div class="field"><label>Temps moyen / visite <span class="i" title="Donnée non publique (temps de lecture = Médiamétrie, payant) : nous ne la pré-remplissons pas. Vous pouvez saisir la vôtre. Visites × temps = temps de lecture, pris en compte au niveau marché quand la clé = temps de lecture (à venir) ; ici la saisie des visites suffit à recalculer votre part.">i</span></label><input id="in_tps" placeholder="non publié — saisissez le vôtre" value="${ov.tps??''}"></div>
+        <div class="field"><label>Pages vues / mois <span class="i" title="Métrique ACPM publique (Classement Unifié). Sert de clé d'audience alternative aux visites : un titre très engageant (pages/visite élevé) y pèse davantage. Estimée (visites × pages_par_visite famille) quand l'ACPM ne la publie pas.">i</span> ${provBadge(pvR)}</label><input id="in_pv" value="${ov.pagesVues??(pvR.valeur||'')}"></div>
       </div>
       <div class="note"><span class="tg">éphémère</span><span>Valeurs <b>locales</b> à votre session — jamais partagées ni écrites dans le dépôt. Elles remplacent nos estimations et recalculent la fiche en direct. Les chiffres publics validés reviennent par PR.</span></div>
     </div>
     <p class="footnote">Δ, parts et revenu projeté sont des <b>projections de scénario</b> — ni certaines ni estimées. Les badges ● sourcé / ≈ estimé portent sur les données d'entrée ; au survol, leur source ou méthode.</p>`;
   $('#back').onclick=()=>{ view='marche'; render(); };
-  const apply=()=>{ const o={}; const ab=parseNum($('#in_ab').value), ar=parseNum($('#in_arpu').value), vi=parseNum($('#in_vis').value), tp=$('#in_tps').value;
-    if(ab) o.abonnes=ab; if(ar) o.arpu=ar; if(vi) o.visites=vi; if(tp) o.tps=tp; localOverride[t.id]=o; render(); };
-  ['in_ab','in_arpu','in_vis'].forEach(id=>$('#'+id).addEventListener('change',apply));
+  const apply=()=>{ const o={}; const ab=parseNum($('#in_ab').value), ar=parseNum($('#in_arpu').value), vi=parseNum($('#in_vis').value), pv=parseNum($('#in_pv').value);
+    if(ab) o.abonnes=ab; if(ar) o.arpu=ar; if(vi) o.visites=vi; if(pv) o.pagesVues=pv; localOverride[t.id]=o; render(); };
+  ['in_ab','in_arpu','in_vis','in_pv'].forEach(id=>$('#'+id).addEventListener('change',apply));
 }
 function parseNum(s){ const n=parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(',','.')); return isNaN(n)?null:n; }
 function shareRow(label,part,resForBadge){

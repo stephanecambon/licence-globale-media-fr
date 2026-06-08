@@ -13,17 +13,17 @@
                          "aide": "Nouveaux payeurs nets recrutés par le pass (au-delà de la migration)." },
     "part_apporteur":  { "valeur": 0.50,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
                          "aide": "Part de la licence reversée à l'éditeur qui a recruté l'abonné. Le reste alimente le pool audience." },
-    "cle_audience":    { "valeur": "temps_de_lecture", "options": ["temps_de_lecture", "pages_vues", "lecteurs_uniques"],
-                         "aide": "Clé de répartition de la part audience (les 1 - part_apporteur restants)." },
+    "cle_audience":    { "valeur": "visites", "options": ["visites", "pages_vues"],
+                         "aide": "Clé de répartition de la part audience (les 1 - part_apporteur restants) : visites OU pages vues, deux vraies métriques ACPM par titre. Visiteurs uniques et temps de lecture (Médiamétrie, payant) sont exclus." },
     "enveloppe_ia":    { "valeur": 80000000,  "unite": "€/an",   "min": 0, "max": 300000000, "pas": 5000000,
                          "aide": "Enveloppe annuelle négociée avec les acteurs IA. Répartie à 100% aux inférences brutes (modèle TollBit). Pas de take rate : structure gérée par les éditeurs (frais de gestion hors périmètre)." }
   },
 
   "scenarios": {
     "_doc": "Presets. Repris des hypothèses calibrées du modèle initial.",
-    "cannibalisation": { "prix_pass": 12, "taux_migration": 0.80, "net_new": 300000,  "part_apporteur": 0.50, "cle_audience": "temps_de_lecture", "enveloppe_ia": 30000000 },
-    "expansion":       { "prix_pass": 15, "taux_migration": 0.70, "net_new": 1600000, "part_apporteur": 0.50, "cle_audience": "temps_de_lecture", "enveloppe_ia": 80000000 },
-    "streaming":       { "prix_pass": 18, "taux_migration": 0.60, "net_new": 3300000, "part_apporteur": 0.50, "cle_audience": "temps_de_lecture", "enveloppe_ia": 200000000 }
+    "cannibalisation": { "prix_pass": 12, "taux_migration": 0.80, "net_new": 300000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 30000000 },
+    "expansion":       { "prix_pass": 15, "taux_migration": 0.70, "net_new": 1600000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 80000000 },
+    "streaming":       { "prix_pass": 18, "taux_migration": 0.60, "net_new": 3300000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 200000000 }
   },
 
   "defaut": "expansion"

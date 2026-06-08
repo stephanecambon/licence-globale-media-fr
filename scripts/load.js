@@ -14,7 +14,8 @@ export function loadDataset() {
     certain: {
       abonnes_num: read("data/certain/abonnes_num.json"),
       diffusion_payee: read("data/certain/diffusion_payee.json"),
-      visites: read("data/certain/visites.json")
+      visites: read("data/certain/visites.json"),
+      pages_vues: read("data/certain/pages_vues.json")
     },
     marche: read("data/certain/marche.json").valeurs,
     parametres: read("data/estimation/parametres_modele.json"),
