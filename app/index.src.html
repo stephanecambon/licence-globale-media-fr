@@ -344,8 +344,8 @@ function renderEditeur(res){
   const vosAb=t.decomposition.apporteur*fracMig, netNew=t.decomposition.apporteur*fracNew;
   const aud=t.decomposition.audience, ia=t.decomposition.ia, tot=t.revenuProjete;
   const rows=[['Abonnements individuels maintenus',resid,'var(--c-ind)','Revenu des abonnés qui n’ont pas migré vers le pass et gardent leur abonnement individuel : (1 − migration) × revenu actuel.'],
-              ['Vos abonnés migrés (part du pass)',vosAb,'var(--c-app)','Part du pool apporteur venant de vos abonnés actuels qui migrent vers le pass.'],
-              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)','Part du pool apporteur venant des nouveaux payeurs, au prorata de votre base (force d’acquisition).'],
+              ['Vos abonnés migrés (part du pass)',vosAb,'var(--c-app)','Votre part du pool apporteur (mutualisé, réparti au prorata de votre base actuelle = force d’acquisition), pour la fraction du pass composée d’abonnés migrés.'],
+              ['Net new payeurs que vous recrutez',netNew,'var(--c-new)','Votre part du pool apporteur (même clé : prorata de votre base actuelle), pour la fraction du pass composée de nouveaux payeurs recrutés.'],
               ['Revenus licence globale liés à votre audience',aud,'var(--c-aud)','Votre part du pool audience, répartie selon la clé active (visites ou pages vues).'],
               ['Droits voisins IA',ia,'var(--c-ia)','Votre part du pool IA, répartie selon l’indice d’inférence (notionnel, aucune donnée publique).']];
   const maxR=Math.max(...rows.map(r=>r[1]),1);
