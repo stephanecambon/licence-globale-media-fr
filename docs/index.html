@@ -82,6 +82,9 @@
   th.r [data-tip]:hover::after,th.r [data-tip]:focus::after{left:auto;right:0;transform:none}
   .legend [data-tip]:hover::before,.legend [data-tip]:focus::before,
   th.r [data-tip]:hover::before,th.r [data-tip]:focus::before{left:auto;right:6px;transform:none}
+  /* Près du bord gauche (rail) : ancrer la bulle à gauche */
+  .rail [data-tip]:hover::after,.rail [data-tip]:focus::after{left:0;right:auto;transform:none}
+  .rail [data-tip]:hover::before,.rail [data-tip]:focus::before{left:6px;right:auto;transform:none}
   .railfoot{font-size:10.5px;color:var(--ink3);margin-top:20px;border-top:1px solid var(--line);padding-top:10px}
 
   /* ---- KPI cartouches ---- */
