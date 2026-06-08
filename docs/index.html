@@ -315,7 +315,7 @@ function runModel(dataset, hypotheses) {
     const delta = p.revenuActuel > 0 ? revenuProjete / p.revenuActuel - 1 : null;
     return {
       id: p.id, nom: p.nom, famille: p.famille, groupe: p.groupe,
-      abonnes: p.abonnes, arpu: p.arpu,
+      abonnes: p.abonnes, arpu: p.arpu, visites: p.visites,
       revenuActuel: p.revenuActuel,
       revenuProjete,
       decomposition: { apporteur: revApporteur, audience: revAudience, ia: revIA },
