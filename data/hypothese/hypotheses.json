@@ -8,7 +8,7 @@
     "prix_pass":       { "valeur": 15,        "unite": "€/mois", "min": 8, "max": 25, "pas": 1,
                          "aide": "Le prix mensuel de l'abonnement unique tout-accès. Plus il est élevé, plus la somme à partager entre les éditeurs est grande." },
     "taux_migration":  { "valeur": 0.70,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
-                         "aide": "La part de vos abonnés actuels qui basculent vers le pass. Les autres gardent leur abonnement direct chez leur éditeur." },
+                         "aide": "La part des abonnés actuels qui basculent vers le pass. Les autres gardent leur abonnement direct chez leur éditeur." },
     "net_new":         { "valeur": 1600000,   "unite": "payeurs","min": 0, "max": 5000000, "pas": 100000,
                          "aide": "Les nouveaux abonnés que le pass attire — des gens qui ne payaient aucun titre avant." },
     "part_apporteur":  { "valeur": 0.50,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
@@ -16,7 +16,7 @@
     "cle_audience":    { "valeur": "visites", "options": ["visites", "pages_vues"],
                          "aide": "La mesure d'audience qui sert à partager la part « audience » entre les titres : nombre de visites ou de pages vues (chiffres ACPM publics)." },
     "enveloppe_ia":    { "valeur": 80000000,  "unite": "€/an",   "min": 0, "max": 300000000, "pas": 5000000,
-                         "aide": "Le montant annuel que les acteurs de l'IA verseraient pour utiliser les contenus. Reversé en entier aux éditeurs, sans commission." }
+                         "aide": "Le revenu annuel net versé par les acteurs de l'IA pour utiliser les contenus (hors éventuelle commission). Reversé en entier aux éditeurs." }
   },
 
   "scenarios": {
