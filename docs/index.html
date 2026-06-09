@@ -595,7 +595,7 @@ function renderEditeur(res){
     <div class="rule"></div>
     ${rows.map(r=>`<div class="rb"><span class="l"><span class="dotk" style="background:${r[2]}"></span>${esc(r[0])}<span class="i" data-tip="${esc(r[3])}">i</span></span>
       <span class="t"><i style="width:${r[1]/maxR*100}%;background:${r[2]}"></i></span><span class="a">${fmtM(r[1])}</span></div>`).join('')}
-    <div class="sech">Votre poids dans la répartition</div>
+    <div class="sech">Votre poids dans le marché actuel</div>
     ${shareRow('Votre part des abonnés',t.partApporteur,t.abonnes,'Le poids de vos abonnés dans l’ensemble du marché. Sert à partager la part « recruteur ». Un résultat calculé.')}
     ${shareRow('Votre part de l’audience ('+audLabel+')',t.partAudience,audR,'Le poids de votre audience ('+audLabel+') dans le total. Sert à partager la part « audience ». Un résultat calculé.')}
     ${shareRow('Votre part de l’usage par les IA',t.partInference,{couche:'estimation',methode:'estimation théorique (aucune donnée publique)'},'Le poids estimé de vos contenus dans l’usage des IA. Estimation théorique, aucune donnée publique. Un résultat calculé.')}
