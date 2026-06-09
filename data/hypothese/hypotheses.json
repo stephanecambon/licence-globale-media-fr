@@ -5,7 +5,7 @@
   },
 
   "leviers": {
-    "prix_pass":       { "valeur": 12.99,     "unite": "€/mois", "min": 9, "max": 26, "pas": 0.01,
+    "prix_pass":       { "valeur": 12.99,     "unite": "€/mois", "min": 9.99, "max": 25.99, "pas": 1,
                          "aide": "Le prix mensuel de l'abonnement unique tout-accès. Plus il est élevé, plus la somme à partager entre les éditeurs est grande." },
     "taux_migration":  { "valeur": 0.70,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
                          "aide": "La part des abonnés actuels qui basculent vers le pass. Les autres gardent leur abonnement direct chez leur éditeur." },

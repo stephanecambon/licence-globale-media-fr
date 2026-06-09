@@ -273,7 +273,7 @@ function buildRail(){
   // leviers
   const host=$('#leviers'); host.innerHTML='';
   host.insertAdjacentHTML('beforeend','<p class="grp">Le pass (abonnements)</p>');
-  slider(host,'prix_pass',v=>v+' €'); slider(host,'taux_migration',v=>Math.round(v*100)+' %');
+  slider(host,'prix_pass',v=>v.toLocaleString('fr-FR',{maximumFractionDigits:2})+' €'); slider(host,'taux_migration',v=>Math.round(v*100)+' %');
   slider(host,'net_new',v=>(v/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1})+' M');
   slider(host,'part_apporteur',v=>Math.round(v*100)+' %'); selectCle(host);
   host.insertAdjacentHTML('beforeend','<p class="grp">Revenus de l\'IA</p>');
