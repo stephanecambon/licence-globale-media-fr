@@ -5,7 +5,7 @@
   },
 
   "leviers": {
-    "prix_pass":       { "valeur": 15,        "unite": "€/mois", "min": 8, "max": 25, "pas": 1,
+    "prix_pass":       { "valeur": 12.99,     "unite": "€/mois", "min": 9, "max": 26, "pas": 0.01,
                          "aide": "Le prix mensuel de l'abonnement unique tout-accès. Plus il est élevé, plus la somme à partager entre les éditeurs est grande." },
     "taux_migration":  { "valeur": 0.70,      "unite": "ratio",  "min": 0, "max": 1, "pas": 0.05,
                          "aide": "La part des abonnés actuels qui basculent vers le pass. Les autres gardent leur abonnement direct chez leur éditeur." },
@@ -20,11 +20,13 @@
   },
 
   "scenarios": {
-    "_doc": "Presets. Repris des hypothèses calibrées du modèle initial.",
-    "cannibalisation": { "prix_pass": 12, "taux_migration": 0.80, "net_new": 300000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 30000000 },
-    "expansion":       { "prix_pass": 15, "taux_migration": 0.70, "net_new": 1600000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 80000000 },
-    "streaming":       { "prix_pass": 18, "taux_migration": 0.60, "net_new": 3300000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 200000000 }
+    "_doc": "Presets de scénarios. Ordre = ordre d'affichage des puces dans le rail.",
+    "streaming": { "prix_pass": 16.99, "taux_migration": 0.90, "net_new": 2000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
+    "premium":   { "prix_pass": 24,    "taux_migration": 0.60, "net_new": 500000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
+    "equilibre": { "prix_pass": 18,    "taux_migration": 0.80, "net_new": 1000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 80000000 },
+    "prudent":   { "prix_pass": 20,    "taux_migration": 0.72, "net_new": 800000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
+    "max":       { "prix_pass": 12.99, "taux_migration": 0.95, "net_new": 3000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 100000000 }
   },
 
-  "defaut": "expansion"
+  "defaut": "max"
 }
