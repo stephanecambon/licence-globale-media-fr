@@ -511,7 +511,7 @@ function selectCle(host){
   el.querySelector('select').onchange=e=>{ state.cle_audience=e.target.value; markPreset(); render(); };
   host.appendChild(el);
 }
-const LABELS={prix_pass:'Prix du pass',taux_migration:"Taux d'adoption",net_new:'Nouveaux abonnés',part_apporteur:'Part au recruteur',enveloppe_ia:'Montant payé par les IA'};
+const LABELS={prix_pass:'Prix du pass',taux_migration:"Taux d'adoption",net_new:'Nouveaux abonnés au pass',part_apporteur:'Part au recruteur',enveloppe_ia:'Montant payé par les IA'};
 const labelOf=k=>LABELS[k]||k;
 
 /* =================== rendu =================== */
