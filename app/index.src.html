@@ -266,7 +266,7 @@ function buildRail(){
   // presets
   const pres = $('#presets'); pres.innerHTML='';
   Object.keys(DATASET.hypotheses.scenarios).filter(k=>k[0]!=='_').forEach(name=>{
-    const b=document.createElement('button'); b.className='preset'; b.textContent=name[0].toUpperCase()+name.slice(1);
+    const b=document.createElement('button'); b.className='preset'; b.dataset.key=name; b.textContent=PRESET_LABELS[name]||(name[0].toUpperCase()+name.slice(1));
     b.onclick=()=>{ state=hypothesesDepuisScenario(DATASET,name); localOverride={}; buildRail(); render(); };
     pres.appendChild(b);
   });
@@ -281,9 +281,10 @@ function buildRail(){
   // refléter preset actif
   markPreset();
 }
+const PRESET_LABELS={streaming:'Streaming',premium:'Premium',equilibre:'Équilibré',prudent:'Prudent',max:'Max'};
 function markPreset(){
   document.querySelectorAll('.preset').forEach(b=>{
-    const sc=DATASET.hypotheses.scenarios[b.textContent.toLowerCase()];
+    const sc=DATASET.hypotheses.scenarios[b.dataset.key];
     b.classList.toggle('on', sc && ['prix_pass','taux_migration','net_new','part_apporteur','enveloppe_ia','cle_audience'].every(k=>sc[k]===state[k]));
   });
 }
