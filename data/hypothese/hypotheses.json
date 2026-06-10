@@ -22,9 +22,9 @@
   "scenarios": {
     "_doc": "Presets de scénarios. Ordre = ordre d'affichage des puces dans le rail.",
     "streaming": { "prix_pass": 16.99, "taux_migration": 0.90, "net_new": 2000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
-    "premium":   { "prix_pass": 24,    "taux_migration": 0.60, "net_new": 500000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
-    "equilibre": { "prix_pass": 18,    "taux_migration": 0.80, "net_new": 1000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 80000000 },
-    "prudent":   { "prix_pass": 20,    "taux_migration": 0.72, "net_new": 800000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
+    "premium":   { "prix_pass": 23.99, "taux_migration": 0.60, "net_new": 500000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
+    "equilibre": { "prix_pass": 17.99, "taux_migration": 0.80, "net_new": 1000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 80000000 },
+    "prudent":   { "prix_pass": 19.99, "taux_migration": 0.72, "net_new": 800000,  "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 0 },
     "max":       { "prix_pass": 12.99, "taux_migration": 0.95, "net_new": 3000000, "part_apporteur": 0.50, "cle_audience": "visites", "enveloppe_ia": 100000000 }
   },
 
